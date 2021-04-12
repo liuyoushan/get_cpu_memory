@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import psutil
 import time
 import datetime
@@ -8,9 +9,11 @@ import datetime
         将cpu数据输出到指定文件。
         使用前先修改包名配置，以及运行时长
 '''
-
+#######################################################################################
+# ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓配置部分↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+#######################################################################################
 # 进程包名
-PACKAGE_NAME = "chrome1.exe"
+PACKAGE_NAME = "chrome.exe"
 # 运行时长，单位分钟，输入数字如(“1”等于1分钟,“0.1”等于60*0.1分钟）
 RUN_TIME = 0.2
 # 日志写入路径
@@ -37,10 +40,9 @@ def getProcess(pName):
 
     # 未找到进程则抛异常
     if not process_lst:
-        raise Exception('The package name was not found in the system process. '
-                        'Please verify that the program is started')
+        raise Exception("Package name({}) not found, please confirm whether the program has started".
+                        format(PACKAGE_NAME))
     return process_lst
-
 
 def get_cpu(run_time):
     for i in process_lst:
@@ -83,18 +85,18 @@ def get_cpu(run_time):
                     # cpu数据添加到dicts字典中，按pid进行存储
                     dicts[process_instance.pid].append(cpu)
 
-                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.format \
-                        (p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
+                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.\
+                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
                     print(cpu_data)
                     # 写入运行的cpu数据
                     f.write(str(cpu_data) + '\n')
 
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
-            print('当前时间：{}  运行结束时间：{}'.format(current_time, end_times))
+            print('当前时间：{p1}  运行结束时间：{p2}'.format(p1=current_time, p2=end_times))
             # 判断时间到了则退出，并计算平均数
             if current_time == end_times:
-                end_info = 'StartTime：{}, CurrentTime：{}, EndTime：{}'. \
-                    format(start_time.strftime('%H:%M:%S'), current_time, end_times)
+                end_info = 'StartTime：{p1}, CurrentTime：{p2}, EndTime：{p3}'. \
+                    format(p1=start_time.strftime('%H:%M:%S'), p2=current_time, p3=end_times)
                 title = ' ' * len(dicts) + 'PID' + ' ' * len(dicts) + 'CPU平均值(数据总数)'
                 cpu_count_avg = '-' * 80 + '\n' + end_info + '\n' + title + '\n'
                 # 计算cpu平均数
