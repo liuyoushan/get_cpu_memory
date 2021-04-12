@@ -9,10 +9,10 @@ import datetime
         使用前先修改包名配置，以及运行时长
 '''
 
-# 进程名称
-NAME = "chrome.exe"
+# 进程包名
+PACKAGE_NAME = "chrome1.exe"
 # 运行时长，单位分钟，输入数字如(“1”等于1分钟,“0.1”等于60*0.1分钟）
-NUMBER = 0.2
+RUN_TIME = 0.2
 # 日志写入路径
 PATH = 'D:\logs\get_cpu_memory.txt'
 
@@ -34,6 +34,7 @@ def getProcess(pName):
             process_lst.append(p)
             # 匹配的pid加入dicts字典，用来计算平均数
             dicts[p.pid] = []
+
     # 未找到进程则抛异常
     if not process_lst:
         raise Exception('The package name was not found in the system process. '
@@ -47,8 +48,10 @@ def get_cpu(run_time):
     # 运行时间
     start_time = datetime.datetime.now()
     end_times = (datetime.datetime.now() + datetime.timedelta(minutes=run_time)).strftime('%H:%M:%S')
+
     with open(PATH, 'w'):  # 清空文件
         pass
+
     with open(PATH, 'a+') as f:  # 写入文件
         while True:
             # # 获取内存利用率：
@@ -60,8 +63,8 @@ def get_cpu(run_time):
             for process_instance in process_lst:
                 try:
                     process_instance.cpu_percent(None)
-                except:
-                    pass
+                except psutil.NoSuchProcess as e:
+                    info_lose += 'WARNING:{}\n'.format(e)
             # 间隔时间
             time.sleep(2)
 
@@ -69,25 +72,26 @@ def get_cpu(run_time):
             for process_instance in process_lst:
                 try:
                     cpu = process_instance.cpu_percent()
-                except:
+                except psutil.NoSuchProcess as e:
                     cpu = None
-                    info_lose = '进程丢失：{}'.format(process_instance.pid)
+                    info_lose += 'WARNING:{}\n'.format(e)
                     print(info_lose)
                     f.write(str(info_lose) + '\n')
+
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
                 if cpu != None:
                     # cpu数据添加到dicts字典中，按pid进行存储
                     dicts[process_instance.pid].append(cpu)
 
-                    cpu_data = 'Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.format \
-                        (p1=localtime, p2=process_instance.pid, p3=NAME, p4=cpu)
+                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.format \
+                        (p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
                     print(cpu_data)
                     # 写入运行的cpu数据
                     f.write(str(cpu_data) + '\n')
 
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
             print('当前时间：{}  运行结束时间：{}'.format(current_time, end_times))
-            # 如果时间到了则退出，并计算平均数
+            # 判断时间到了则退出，并计算平均数
             if current_time == end_times:
                 end_info = 'StartTime：{}, CurrentTime：{}, EndTime：{}'. \
                     format(start_time.strftime('%H:%M:%S'), current_time, end_times)
@@ -101,11 +105,11 @@ def get_cpu(run_time):
                           p5=len(dicts[i])))
                     cpu_count_avg += e + '\n'
                 print(cpu_count_avg)
-                # 写入计算的平均值
+                # 平均值写入文件
                 f.write(cpu_count_avg)
                 break
 
 
 if __name__ == '__main__':
-    getProcess(NAME)
-    get_cpu(NUMBER)
+    getProcess(PACKAGE_NAME)
+    get_cpu(RUN_TIME)
