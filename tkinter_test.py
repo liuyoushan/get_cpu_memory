@@ -91,6 +91,8 @@ class GUI():
         get_cpu_memory_Threads.PACKAGE_NAME = str(self.E1.get())
         # 点击运行重置旗标判断的属性为True
         get_cpu_memory_Threads.if_code = True
+        # 先清空process_lst列表
+        get_cpu_memory_Threads.process_lst = []
         # 调用getProcess获取进程列表
         getprocess = get_cpu_memory_Threads.getProcess()
 

@@ -51,8 +51,8 @@ start_time = datetime.datetime.now()
 if_code = True
 
 def get_cpu():
-    for i in process_lst:
-        dicts_cpu[i.pid] = []
+    # for i in process_lst:
+    #     dicts_cpu[i.pid] = []
 
     with open(PATH, 'w'):  # 清空文件
         pass
