@@ -23,7 +23,8 @@ process_lst = []
 # 存储进程pid和对应的cpu百分比
 dicts_cpu = {}
 dicts_memory = {}
-
+# 旗标判断，用来判断是否退出运行
+if_code = True
 
 # 获取进程名为Python的进程对象列表,并添加到指定列表
 def getProcess():
@@ -43,14 +44,12 @@ def getProcess():
         return False
     return process_lst
 
+def times():
+    # 运行时间
+    start_time = datetime.datetime.now().strftime('%H:%M:%S')
+    return start_time
 
-# 运行时间
-start_time = datetime.datetime.now()
-
-# 旗标判断，用来判断是否退出运行
-if_code = True
-
-def get_cpu():
+def get_cpu(timess):
     # for i in process_lst:
     #     dicts_cpu[i.pid] = []
 
@@ -89,7 +88,7 @@ def get_cpu():
             print(info_lose)
 
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
-            timess = '开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=start_time)
+            timess = '开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=timess)
             info_lose += str(timess) + '\n'
 
             if if_code == False:

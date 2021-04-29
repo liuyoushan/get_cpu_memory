@@ -74,8 +74,9 @@ class GUI():
         root.mainloop()
 
     def __show(self):
+        times=get_cpu_memory_Threads.times()
         while True:
-            d = get_cpu_memory_Threads.get_cpu()
+            d = get_cpu_memory_Threads.get_cpu(times)
             self.msg_queue.put(d)
             # 判断停止后则输出平均数
             if get_cpu_memory_Threads.if_code == False:
