@@ -15,14 +15,15 @@ import datetime
 # 进程包名
 PACKAGE_NAME = "chrome.exe"
 # 运行时长，单位分钟，输入数字如(“1”等于1分钟,“0.1”等于60*0.1分钟）
-RUN_TIME = 0.2
+RUN_TIME = 0.1
 # 日志写入路径
 PATH = 'D:\logs\get_cpu_memory.txt'
 
 # 定义一个进程列表
 process_lst = []
 # 存储进程pid和对应的cpu百分比
-dicts = {}
+dicts_cpu = {}
+dicts_memory = {}
 
 
 # 获取进程名为Python的进程对象列表,并添加到指定列表
@@ -36,7 +37,7 @@ def getProcess(pName):
         if p.name() == pName:
             process_lst.append(p)
             # 匹配的pid加入dicts字典，用来计算平均数
-            dicts[p.pid] = []
+            dicts_cpu[p.pid] = []
 
     # 未找到进程则抛异常
     if not process_lst:
@@ -46,10 +47,15 @@ def getProcess(pName):
 
 def get_cpu(run_time):
     for i in process_lst:
-        dicts[i.pid] = []
+        dicts_cpu[i.pid] = []
     # 运行时间
     start_time = datetime.datetime.now()
     end_times = (datetime.datetime.now() + datetime.timedelta(minutes=run_time)).strftime('%H:%M:%S')
+    # 时间+1
+    increase = int(end_times[-1]) + 1
+    reduce = int(end_times[-1]) - 1
+    end_times_replace = end_times.replace(end_times[-1], str(increase))
+    end_times_replace_reduce = end_times.replace(end_times[-1], str(reduce))
 
     with open(PATH, 'w'):  # 清空文件
         pass
@@ -57,8 +63,11 @@ def get_cpu(run_time):
     with open(PATH, 'a+') as f:  # 写入文件
         while True:
             # # 获取内存利用率：
+            # memorys = ''
             # for process_instance in process_lst:
-            #     print(process_instance.memory_percent())
+            #     memorys = process_instance.memory_percent()
+            #     # 内存数据添加到dicts字典中，按pid进行存储
+            #     dicts_memory[process_instance.pid].append(memorys)
             # ------------------------------------
             info_lose = ''
             # 获取cpu利用率：
@@ -83,7 +92,7 @@ def get_cpu(run_time):
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
                 if cpu != None:
                     # cpu数据添加到dicts字典中，按pid进行存储
-                    dicts[process_instance.pid].append(cpu)
+                    dicts_cpu[process_instance.pid].append(cpu)
 
                     cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.\
                         format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
@@ -94,17 +103,18 @@ def get_cpu(run_time):
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
             print('当前时间：{p1}  运行结束时间：{p2}'.format(p1=current_time, p2=end_times))
             # 判断时间到了则退出，并计算平均数
-            if current_time == end_times:
+            if current_time == end_times or current_time == end_times_replace or current_time == end_times_replace_reduce:
                 end_info = 'StartTime：{p1}, CurrentTime：{p2}, EndTime：{p3}'. \
                     format(p1=start_time.strftime('%H:%M:%S'), p2=current_time, p3=end_times)
-                title = ' ' * len(dicts) + 'PID' + ' ' * len(dicts) + 'CPU平均值(数据总数)'
+                title = ' ' * len(dicts_cpu) + 'PID' + ' ' * len(dicts_cpu) + 'CPU平均值(数据总数)'
                 cpu_count_avg = '-' * 80 + '\n' + end_info + '\n' + title + '\n'
                 # 计算cpu平均数
-                for i in dicts:
-                    counts = (dicts[i][0] + dicts[i][-1]) / len(dicts[i])
+                for i in dicts_cpu:
+
+                    counts = (dicts_cpu[i][0] + dicts_cpu[i][-1]) / len(dicts_cpu[i])
                     e = ('{p1}{p2}{p3}{p4:.1f}%({p5})'.format
-                         (p1=' ' * len(dicts), p2=i, p3=' ' * (len(dicts) - len(str(i)) + 3), p4=counts,
-                          p5=len(dicts[i])))
+                         (p1=' ' * len(dicts_cpu), p2=i, p3=' ' * (len(dicts_cpu) - len(str(i)) + 3), p4=counts,
+                          p5=len(dicts_cpu[i])))
                     cpu_count_avg += e + '\n'
                 print(cpu_count_avg)
                 # 平均值写入文件
@@ -115,3 +125,16 @@ def get_cpu(run_time):
 if __name__ == '__main__':
     getProcess(PACKAGE_NAME)
     get_cpu(RUN_TIME)
+
+
+
+    # # 获取内存利用率：
+    # memorys = ''
+    # for process_instance in process_lst:
+    #     m=process_instance.memory_info().rss /1024 /1024
+    #     memorys = process_instance.memory_percent()
+    #     print(process_instance.pid,'{:.4f}GB'.format(m))
+    #     print(memorys)
+
+
+
