@@ -52,7 +52,7 @@ class GUI():
         self.scrollBar.pack(side="right", fill="y")
 
         # Text（文本）组件用于显示和处理多行文本
-        self.text = tk.Text(self.root, height=50, bd=1, relief="solid",
+        self.text = tk.Text(self.root, height=50, bd=1, relief="solid",bg='PaleGreen',
                             yscrollcommand=self.scrollBar.set)
         logPrint = ('⬇'*40)+'日志打印'+('⬇'*40)
         self.text.insert("insert", 'Tips：\n1、请先填写包名，如：chrome.exe\n2、点击【结束运行】可获取平均值！！\n'+'\n'+logPrint+'\n')
