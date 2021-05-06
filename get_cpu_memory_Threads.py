@@ -7,8 +7,6 @@ import datetime
 '''
 脚本简介：
         根据包名找到指定包的所有线程，打印出所有线程的cpu使用率，并计算平均数。
-        将cpu数据输出到指定文件。
-        使用前先修改包名配置，以及运行时长
 '''
 #######################################################################################
 # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓配置部分↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -25,6 +23,7 @@ dicts_cpu = {}
 dicts_memory = {}
 # 旗标判断，用来判断是否退出运行
 if_code = True
+
 
 # 获取进程名为Python的进程对象列表,并添加到指定列表
 def getProcess():
@@ -72,18 +71,20 @@ def get_cpu(timess):
             for process_instance in process_lst:
                 try:
                     cpu = process_instance.cpu_percent()
+                    cpus = cpu / 2
                 except psutil.NoSuchProcess as e:
-                    cpu = None
+                    cpus = None
                     info_lose += 'WARNING:{}\n'.format(e)
                     # print(info_lose)
 
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
-                if cpu != None:
+
+                if cpus != None:
                     # cpu数据添加到dicts字典中，按pid进行存储
-                    dicts_cpu[process_instance.pid].append(cpu)
+                    dicts_cpu[process_instance.pid].append(cpus)
 
                     cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'. \
-                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
+                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpus)
                     info_lose += cpu_data + '\n'
             print(info_lose)
 
@@ -102,13 +103,21 @@ def if_exit():
     info_lose = ''
     title = ' ' * len(dicts_cpu) + 'PID' + ' ' * len(dicts_cpu) + 'CPU平均值(数据总数)'
     info_lose += '-' * 80 + '\n'  + '\n' + title + '\n'
-    # 计算cpu平均数
+    '''
+    计算cpu平均数
+    1、for获取字典的key
+    2、第二个for获取对应value列表的所有参数，并相加->再除以参数个数->得出平均数
+    3、每次循环后counts都重置为0
+    '''
     for i in dicts_cpu:
-        counts = (dicts_cpu[i][0] + dicts_cpu[i][-1]) / len(dicts_cpu[i])
-        e = ('{p1}{p2}{p3}{p4:.1f}%({p5})'.format
-             (p1=' ' * len(dicts_cpu), p2=i, p3=' ' * (len(dicts_cpu) - len(str(i)) + 3), p4=counts,
+        counts = 0
+        for j in range(len(dicts_cpu[i])):
+            counts = dicts_cpu[i][j] + counts
+        counts = counts / len(dicts_cpu[i])
+        text = ('{p1}{p2}{p3}{p4:.1f}%({p5})'.format
+             (p1=' ' * len(dicts_cpu), p2=i, p3=' ' * (len(dicts_cpu)+3 - len(str(i)) + 3), p4=counts,
               p5=len(dicts_cpu[i])))
-        info_lose += e + '\n'
+        info_lose += text + '\n'
     return info_lose
 
 
