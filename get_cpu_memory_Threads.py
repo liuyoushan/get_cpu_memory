@@ -3,10 +3,19 @@ import psutil
 import time
 import datetime
 
-
 '''
-脚本简介：
-        根据包名找到指定包的所有线程，打印出所有线程的cpu使用率，并计算平均数。
+脚本简介：根据包名找到指定包的所有线程，打印出所有线程的cpu使用率，并计算平均数。
+
+获取cpu逻辑：
+psutil官方文档介绍：
+When interval is 0.0 or None compares process times to system CPU 
+times elapsed since last call, returning 
+immediately. That means the first time this is called it will return a 
+meaningless 0.0 value which you are supposed to ignore.
+
+备注：所以可以对每个process object调用两回cpu_percent, 都用interval=None做参数. 
+第一次相当于启动"秒表", 第二次相当于读取"秒表", 所有的调用都是即时返回的, 所以所得到的结果几乎是对同一时间断统计得到的.
+
 '''
 #######################################################################################
 # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓配置部分↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -15,7 +24,6 @@ import datetime
 PACKAGE_NAME = ''
 # 日志写入路径
 PATH = 'D:\logs\get_cpu_memory.txt'
-
 # 定义一个进程列表
 process_lst = []
 # 存储进程pid和对应的cpu百分比
@@ -38,30 +46,29 @@ def getProcess():
             # 匹配的pid加入dicts字典，用来计算平均数
             dicts_cpu[p.pid] = []
 
-    # 未找到进程则抛异常
+    # 未找到进程则返回False
     if not process_lst:
         return False
     return process_lst
+
 
 def times():
     # 运行时间
     start_time = datetime.datetime.now().strftime('%H:%M:%S')
     return start_time
 
-def get_cpu(timess):
-    # for i in process_lst:
-    #     dicts_cpu[i.pid] = []
 
+# 获取cpu
+def get_cpu(timess):
     with open(PATH, 'w'):  # 清空文件
         pass
-
     with open(PATH, 'a+') as f:  # 写入文件
         while True:
             info_lose = ''
             # 获取cpu利用率：
             for process_instance in process_lst:
                 try:
-                    process_instance.cpu_percent(None)
+                    process_instance.cpu_percent(interval=None)
                 except psutil.NoSuchProcess as e:
                     info_lose += 'WARNING:{}\n'.format(e)  # 如果没有获取到打印警告
             # 间隔时间
@@ -69,40 +76,47 @@ def get_cpu(timess):
 
             # 再次获取cpu利用率：因为cpu是要第一次和第二次获取时，中间时间的cpu使用率，不然都是获取的0
             for process_instance in process_lst:
-                try:
-                    cpu = process_instance.cpu_percent()
-                    cpus = cpu / 2
-                except psutil.NoSuchProcess as e:
-                    cpus = None
-                    info_lose += 'WARNING:{}\n'.format(e)
-                    # print(info_lose)
-
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
+                # 如果进程丢失没有获取到cpu，则抛出警告提示
+                try:
+                    cpu = process_instance.cpu_percent(interval=None)
+                    # 获取的cpu除以间隔时间
+                    cpu = cpu / 2
 
-                if cpus != None:
                     # cpu数据添加到dicts字典中，按pid进行存储
-                    dicts_cpu[process_instance.pid].append(cpus)
-
+                    dicts_cpu[process_instance.pid].append(cpu)
                     cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'. \
-                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpus)
+                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
                     info_lose += cpu_data + '\n'
-            print(info_lose)
+                except psutil.NoSuchProcess as e:
+                    info_lose += 'WARNING:线程丢失 {}\n'.format(e)
+                    process_lst.remove(process_instance)
+                    info_lose += '删除线程：{}\n'.format(process_instance)
+
 
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
             timess = '开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=timess)
             info_lose += str(timess) + '\n'
-
+            print(info_lose)
+            # 判断如果if_code等于False则退出循环
             if if_code == False:
-                avg_count = if_exit()
-                info_lose += str(avg_count)
+                if_exit()
                 break
+
+            # 如果所有进程都丢失了，则退出循环
+            if not process_lst:
+                info_lose += '所有进程都丢失，无法获取cpu。结束运行！！！！！！！！！！'
+                break
+
             return info_lose
 
+
 # 计算平均数
-def if_exit():
+def if_exit(texts=''):
     info_lose = ''
+    info_lose += texts + '\n'
     title = ' ' * len(dicts_cpu) + 'PID' + ' ' * len(dicts_cpu) + 'CPU平均值(数据总数)'
-    info_lose += '-' * 80 + '\n'  + '\n' + title + '\n'
+    info_lose += '-' * 80 + '\n' + '\n' + title + '\n'
     '''
     计算cpu平均数
     1、for获取字典的key
@@ -115,10 +129,7 @@ def if_exit():
             counts = dicts_cpu[i][j] + counts
         counts = counts / len(dicts_cpu[i])
         text = ('{p1}{p2}{p3}{p4:.1f}%({p5})'.format
-             (p1=' ' * len(dicts_cpu), p2=i, p3=' ' * (len(dicts_cpu)+3 - len(str(i)) + 3), p4=counts,
-              p5=len(dicts_cpu[i])))
+                (p1=' ' * len(dicts_cpu), p2=i, p3=' ' * (len(dicts_cpu) + 3 - len(str(i)) + 3), p4=counts,
+                 p5=len(dicts_cpu[i])))
         info_lose += text + '\n'
     return info_lose
-
-
-

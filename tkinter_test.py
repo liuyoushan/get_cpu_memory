@@ -53,7 +53,12 @@ class GUI():
         self.text = tk.Text(self.root, height=50, bd=1, relief="solid", bg='PaleGreen',
                             yscrollcommand=self.scrollBar.set)
         logPrint = ('⬇' * 40) + '日志打印' + ('⬇' * 40)
-        self.text.insert("insert", 'Tips：\n1、请先填写包名，如：chrome.exe\n2、点击【结束运行】可获取平均值！！\n' + '\n' + logPrint + '\n')
+        self.text.insert("insert", 'Tips：\n'
+                                   '     1、请先填写包名，如：chrome.exe\n'
+                                   '     2、点击【结束运行】可获取平均值\n\n'
+                                   '工具作用：\n'
+                                   '     1、获取指定程序每秒占用cpu的百分比\n'
+                         + '\n' + logPrint + '\n')
 
         # 清空text控件内容
         def deletes():
@@ -99,8 +104,8 @@ class GUI():
         getprocess = get_cpu_memory_Threads.getProcess()
 
         if getprocess == False:
-            Error = 'ERROR:Package name({}) not found, please confirm whether the program has started'.format(
-                get_cpu_memory_Threads.PACKAGE_NAME)
+            Error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
+                .format(get_cpu_memory_Threads.PACKAGE_NAME)
             self.text.insert("insert", '\n' + Error + '\n')
         else:
             # 创建一个线程运行
