@@ -69,7 +69,7 @@ class GUI():
         logPrint = ('⬇' * 40) + '日志打印' + ('⬇' * 40)
         self.text.insert("insert", 'Tips：\n'
                                    '     1、请先填写包名，如：chrome.exe\n'
-                                   '     2、点击【结束运行】可获取平均值\n\n'
+                                   '     2、点击【结束运行】可自动获取平均值\n\n'
                                    '工具作用：\n'
                                    '     1、获取指定程序每秒占用cpu的百分比\n'
                          + '\n' + logPrint + '\n')
