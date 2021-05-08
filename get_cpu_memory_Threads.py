@@ -151,4 +151,5 @@ def if_exit(TEXT=''):
                 (p1=' ' * len(dicts_cpu), p2=i, p3=' ' * (len(dicts_cpu) + 3 - len(str(i)) + 3), p4=counts,
                  p5=len(dicts_cpu[i])))
         info_lose += text + '\n'
+
     return info_lose
