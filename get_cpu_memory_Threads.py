@@ -4,7 +4,7 @@ import time
 import datetime
 
 '''
-脚本简介：根据包名找到指定包的所有线程，打印出所有线程的cpu使用率，并计算平均数。
+脚本简介：根据包名找到指定包的所有线程，打印出所有线程每秒cpu使用率，并计算平均数。
 
 获取cpu逻辑：
 psutil官方文档介绍：
@@ -35,6 +35,10 @@ if_code = True
 
 # 获取进程名为Python的进程对象列表,并添加到指定列表
 def getProcess():
+    '''
+    根据包名找到该包名下的所有线程，并添加到列表
+    :return: 进程列表process_lst
+    '''
     # 获取当前系统所有进程id列表
     all_pid = psutil.pids()
 
@@ -53,13 +57,24 @@ def getProcess():
 
 
 def times():
+    '''
+    获取一个当前时间，作为开始启动的时间
+    :return: startRun时间
+    '''
     # 运行时间
     start_time = datetime.datetime.now().strftime('%H:%M:%S')
     return start_time
 
 
-# 获取cpu
-def get_cpu(timess):
+def get_cpu(Time):
+    '''
+    获取cpu方法
+    1、分2次获取cpu得出间隔时间内的cpu占用率
+    2、间隔时间2秒，得出的cpu除以2，等于得出每秒占用率
+    3、判断为False退出循环，判断线程丢失退出循环
+    :param Time:开始执行的时间
+    :return:每次获取的cpu占用率进行return
+    '''
     with open(PATH, 'w'):  # 清空文件
         pass
     with open(PATH, 'a+') as f:  # 写入文件
@@ -93,36 +108,40 @@ def get_cpu(timess):
                     process_lst.remove(process_instance)
                     info_lose += '删除线程：{}\n'.format(process_instance)
 
-
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
-            timess = '开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=timess)
-            info_lose += str(timess) + '\n'
+            times = '开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=Time)
+            info_lose += str(times) + '\n'
             print(info_lose)
-            # 判断如果if_code等于False则退出循环
-            if if_code == False:
-                if_exit()
-                break
 
             # 如果所有进程都丢失了，则退出循环
             if not process_lst:
                 info_lose += '所有进程都丢失，无法获取cpu。结束运行！！！！！！！！！！'
                 break
 
+            # 判断如果if_code等于False则退出循环
+            if if_code == False:
+                if_exit()
+                break
+
             return info_lose
 
 
 # 计算平均数
-def if_exit(texts=''):
-    info_lose = ''
-    info_lose += texts + '\n'
-    title = ' ' * len(dicts_cpu) + 'PID' + ' ' * len(dicts_cpu) + 'CPU平均值(数据总数)'
-    info_lose += '-' * 80 + '\n' + '\n' + title + '\n'
+def if_exit(TEXT=''):
     '''
     计算cpu平均数
-    1、for获取字典的key
-    2、第二个for获取对应value列表的所有参数，并相加->再除以参数个数->得出平均数
-    3、每次循环后counts都重置为0
+    1、for获取字典的key，定义一个counts变量用来计算总数（每次循环前将counts重置为0）
+    2、第二个for获取指定key的value列表的所有参数，并相加->再除以参数个数->得出平均数
+    3、将平均数添加到info_lose变量
+    4、执行完成后进行return
+    :param TEXT:预置字符串字段，用来输出提示信息的，如需要可进行调用
+    :return:返回所有线程平均值
     '''
+    info_lose = ''
+    info_lose += TEXT + '\n'
+    title = ' ' * len(dicts_cpu) + 'PID' + ' ' * len(dicts_cpu) + 'CPU平均值(数据总数)'
+    info_lose += '-' * 80 + '\n' + '\n' + title + '\n'
+
     for i in dicts_cpu:
         counts = 0
         for j in range(len(dicts_cpu[i])):

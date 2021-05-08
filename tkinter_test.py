@@ -10,22 +10,36 @@ class GUI():
     def __init__(self, root):
         # new 一个Quue用于保存输出内容
         self.msg_queue = queue.Queue()
+        # 将initGUI方法放到初始化方法里面，调用类的时候默认执行
         self.initGUI(root)
 
     # 在show_msg方法里，从Queue取出元素，输出到Text
     def show_msg(self):
+        '''
+        1、队列不为空则执行循环
+        2、去get队列里面的内容并输出到日志文本框
+        :return:
+        '''
         while not self.msg_queue.empty():
             content = self.msg_queue.get()
-            if content == None:
+            if content != None:
+                self.text.insert("insert", content)
+                # 保持焦点在行尾
+                self.text.see("end")
+            else:
                 # print('self.msg_queue.get 为空')
                 break
-            self.text.insert("insert", content)
-            # 保持焦点在行尾
-            self.text.see("end")
+
         # after方法再次调用show_msg
         self.root.after(100, self.show_msg)
 
     def initGUI(self, root):
+        '''
+        1、tkinter主页面布局
+        2、按钮、输入框、日志文本框等所有控件
+        3、ps：定时任务：after，定时(100毫秒)调用show_msg方法，相当于监控吧
+        :param root:将调用的库tk.Tk()，变量给root了
+        '''
         self.root = root
         self.root.title("获取cpu占用率工具")
         self.root.geometry("800x600")
@@ -80,40 +94,53 @@ class GUI():
         root.mainloop()
 
     def __show(self):
-        times = get_cpu_memory_Threads.times()
+        '''
+        1、调用get_cpu方法并传入当前时间
+        2、写个死循环去获取cpu数据
+        3、判断有cpu数据将添加到msg_queue队列，无数据为None时，则计算平均数。并退出循环
+        '''
+        Time = get_cpu_memory_Threads.times()
         while True:
-            d = get_cpu_memory_Threads.get_cpu(times)
-            self.msg_queue.put(d)
-            # 判断停止后则输出平均数
-            if get_cpu_memory_Threads.if_code == False:
+            d = get_cpu_memory_Threads.get_cpu(Time)
+            # 判断get_cpu已停止则计算平均数
+            if d != None:
+                self.msg_queue.put(d)
+            else:
                 avg_count = get_cpu_memory_Threads.if_exit()
                 self.msg_queue.put(avg_count)
                 print(avg_count)
-            if not d:
-                # print('为空')
                 break
 
     def show(self):
-        # 修改get_cpu_memory_Threads文件的packname属性（执行的包名）
+        '''
+        点击运行按钮后调用此方法
+        1、点击运行时重置一些配置数据
+        2、调用getProcess根据包名获取进程列表
+        3、判断getProcess，找到线程则开启一个线程来运行，未找到则抛异常
+        '''
+        # 将在输入框控件（E1）获取的包名赋值给PACKAGE_NAME变量（执行的包名）
         get_cpu_memory_Threads.PACKAGE_NAME = str(self.E1.get())
-        # 点击运行重置旗标判断的属性为True
+        # 点击运行重置旗标判断的属性为True（用来判断是否结束运行的属性）
         get_cpu_memory_Threads.if_code = True
-        # 先清空process_lst列表
+        # 每次点击运行要先清空process_lst列表
         get_cpu_memory_Threads.process_lst = []
-        # 调用getProcess获取进程列表
+        # 调用getProcess根据包名获取进程列表
         getprocess = get_cpu_memory_Threads.getProcess()
 
-        if getprocess == False:
-            Error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
-                .format(get_cpu_memory_Threads.PACKAGE_NAME)
-            self.text.insert("insert", '\n' + Error + '\n')
-        else:
+        if getprocess:
             # 创建一个线程运行
             T = threading.Thread(target=self.__show, args=())
             T.start()
+        else:
+            Error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
+                .format(get_cpu_memory_Threads.PACKAGE_NAME)
+            self.text.insert("insert", '\n' + Error + '\n')
 
     def end_threads(self):
-        # 点击结束运行将code设置为False
+        '''
+        点击结束运行将code设置为False
+        :return:
+        '''
         get_cpu_memory_Threads.if_code = False
 
 
