@@ -8,21 +8,24 @@ import queue
 
 class GUI():
     def __init__(self, root):
+        # 初始化一个属性值
+        self.numb = 0
         # new 一个Quue用于保存输出内容
         self.msg_queue = queue.Queue()
         # 将initGUI方法放到初始化方法里面，调用类的时候默认执行
         self.initGUI(root)
 
+
     # 在show_msg方法里，从Queue取出元素，输出到Text
     def show_msg(self):
         '''
-        1、队列不为空则执行循环
+        1、队列不为None则执行循环
         2、去get队列里面的内容并输出到日志文本框
         :return:
         '''
         while not self.msg_queue.empty():
             content = self.msg_queue.get()
-            if content != None:
+            if content is not None:
                 self.text.insert("insert", content)
                 # 保持焦点在行尾
                 self.text.see("end")
@@ -68,10 +71,9 @@ class GUI():
                             yscrollcommand=self.scrollBar.set)
         logPrint = ('⬇' * 40) + '日志打印' + ('⬇' * 40)
         self.text.insert("insert", 'Tips：\n'
-                                   '     1、请先填写包名，如：chrome.exe\n'
-                                   '     2、点击【结束运行】可自动获取平均值\n\n'
-                                   '工具作用：\n'
-                                   '     1、获取指定程序每秒占用cpu的百分比\n'
+                                   '     1、填写包名后运行，如：chrome.exe\n'
+                                   '     2、点击【结束运行】自动计算平均值\n'
+                                   '     3、日志保存路径：运行程序同级目录下\n\n'
                          + '\n' + logPrint + '\n')
 
         # 清空text控件内容
@@ -99,11 +101,11 @@ class GUI():
         2、写个死循环去获取cpu数据
         3、判断有cpu数据将添加到msg_queue队列，无数据为None时，则计算平均数。并退出循环
         '''
-        Time = get_cpu_memory_Threads.times()
+        time_data = get_cpu_memory_Threads.times()
         while True:
-            d = get_cpu_memory_Threads.get_cpu(Time)
+            d = get_cpu_memory_Threads.get_cpu(time_data)
             # 判断get_cpu已停止则计算平均数
-            if d != None:
+            if d is not None:
                 self.msg_queue.put(d)
             else:
                 avg_count = get_cpu_memory_Threads.if_exit()
@@ -126,15 +128,20 @@ class GUI():
         get_cpu_memory_Threads.process_lst = []
         # 调用getProcess根据包名获取进程列表
         getprocess = get_cpu_memory_Threads.getProcess()
+        # 首次点击运行时清空log文件
+        if self.numb < 1:
+            with open(get_cpu_memory_Threads.PATH, 'w'):
+                print('log文件已清空')
+            self.numb += 1
 
         if getprocess:
             # 创建一个线程运行
-            T = threading.Thread(target=self.__show, args=())
-            T.start()
+            t = threading.Thread(target=self.__show, args=())
+            t.start()
         else:
-            Error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
+            error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
                 .format(get_cpu_memory_Threads.PACKAGE_NAME)
-            self.text.insert("insert", '\n' + Error + '\n')
+            self.text.insert("insert", '\n' + error + '\n')
 
     def end_threads(self):
         '''
