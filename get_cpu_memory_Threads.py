@@ -26,13 +26,14 @@ meaningless 0.0 value which you are supposed to ignore.
 PACKAGE_NAME = ''
 # 日志写入路径
 PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
-PATH = os.path.join(PATH, 'log_getCpu.txt')
+PATH = os.path.join(PATH, 'log_getCM.txt')
 # PATH = os.path.join(os.path.dirname(__file__), 'logs.txt')
 # 定义一个进程列表
 process_lst = []
-# 存储进程pid和对应的cpu百分比
+# 存储进程pid和对应的数据
 dicts_cpu = {}
 dicts_memory = {}
+dicts_memory_rss = {}
 # 旗标判断，用来判断是否退出运行
 if_code = True
 
@@ -53,6 +54,8 @@ def getProcess():
             process_lst.append(p)
             # 匹配的pid加入dicts字典，用来计算平均数
             dicts_cpu[p.pid] = []
+            dicts_memory[p.pid] = []
+            dicts_memory_rss[p.pid] = []
 
     # 未找到进程则返回False
     if not process_lst:
@@ -81,6 +84,11 @@ def get_cpu(times_data):
     '''
     with open(PATH, 'a+') as f:  # 写入文件
         while True:
+            # 判断如果if_code等于False则退出循环
+            if if_code is False:
+                f.write(get_avg())
+                break
+
             info_lose = ''
             # 获取cpu利用率：
             for process_instance in process_lst:
@@ -92,18 +100,29 @@ def get_cpu(times_data):
             time.sleep(2)
 
             # 再次获取cpu利用率：因为cpu是要第一次和第二次获取时，中间时间的cpu使用率，不然都是获取的0
+            # 获取内存利用率
             for process_instance in process_lst:
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
-                # 如果进程丢失没有获取到cpu，则抛出警告提示
                 try:
+                    # 获取内存利用率
+                    memorys = process_instance.memory_percent()
+                    # 获取rss内存消耗
+                    memory_rss = process_instance.memory_info().rss / 1024 / 1024 / 1024
+                    # 内存利用率添加到dicts字典中，按pid进行存储
+                    dicts_memory[process_instance.pid].append(memorys)
+                    # 内存rss数据添加到字典中，按pid进行存储
+                    dicts_memory_rss[process_instance.pid].append(memory_rss)
+
+                    # 获取cpu利用率
                     cpu = process_instance.cpu_percent(interval=None)
                     # 获取的cpu除以间隔时间
                     cpu = cpu / 2
-
                     # cpu数据添加到dicts字典中，按pid进行存储
                     dicts_cpu[process_instance.pid].append(cpu)
-                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'. \
-                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
+                    # 整合显示数据
+                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%, Memory/rss:{p5}%/{p6}GB'. \
+                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu, p5=memorys,
+                               p6=memory_rss)
                     info_lose += cpu_data + '\n'
                 except psutil.NoSuchProcess as e:
                     info_lose += 'WARNING:线程丢失 {}\n'.format(e)
@@ -122,17 +141,10 @@ def get_cpu(times_data):
                 f.write(info_lose)
                 break
 
-            # 判断如果if_code等于False则退出循环
-            if if_code is False:
-                avg = if_exit()
-                f.write(avg)
-                break
-
             return info_lose
 
 
-# 计算平均数
-def if_exit(texts=''):
+def count_avg(number):
     '''
     计算cpu平均数
     1、for获取字典的key，定义一个counts变量用来计算总数（每次循环前将counts重置为0）
@@ -143,18 +155,39 @@ def if_exit(texts=''):
     :return:返回所有线程平均值
     '''
     info_lose = ''
-    info_lose += texts + '\n'
-    title = ' ' * len(dicts_cpu) + 'PID' + ' ' * len(dicts_cpu) + 'CPU平均值(数据总数)'
+    title = ' ' * len(number) + 'PID' + ' ' * 5 + 'CPU平均值(数据总数)' + ' ' * 5 + 'memory/内存消耗(数据总数)'
     info_lose += '-' * 80 + '\n' + '\n' + title + '\n'
 
-    for k, v in dicts_cpu.items():
-        counts = 0
+    counts = []  # 计算出来的平均值
+    thread = []  # 对应的线程
+    data_count = 0  # 数据总数
+    for k, v in number.items():
+        n = 0
         for i in range(len(v)):
-            counts += v[i]
-        counts = counts / len(v)
-        text = ('{p1}{p2}{p3}{p4:.1f}%({p5})'.format
-                (p1=' ' * len(dicts_cpu), p2=k, p3=' ' * (len(dicts_cpu) - len(str(k)) + 6),
-                 p4=counts, p5=len(dicts_cpu[k])))
-        info_lose += text + '\n'
+            n += v[i]
+        n = n / len(v)
+        counts.append(n)
+        thread.append(k)
+        if data_count == 0:
+            data_count += len(number[k])
 
+    return counts, thread, data_count
+
+def get_avg():
+    '''
+    数据整合
+    :return: 返回整理好的平均值
+    '''
+    avg_cpu = count_avg(dicts_cpu)
+    avg_memory = count_avg(dicts_memory)
+    avg_memory_rss = count_avg(dicts_memory_rss)
+
+    info_lose = '-' * 80 + '\n'
+    info_lose += ' ' * 5 + 'PID' + ' ' * 5 + 'CPU平均值(数据总数)' + ' ' * 5 + 'memory/内存rss(数据总数)' + '\n'
+    for i in range(len(avg_cpu[0])):
+        space = ' ' * (13 - len(str(avg_cpu[1][i])))
+        info_lose += ('{p1}{p2}{p3}{p4:.1f}%({p5}){p8}{p6:.1f}% / {p7:.4f}GB({p9})\n'.format
+                      (p1=' ' * 4, p2=avg_cpu[1][i], p3=space,p4=avg_cpu[0][i], p5=avg_cpu[2],
+                       p6=avg_memory[0][i], p7=avg_memory_rss[0][i], p8=' ' * 10,
+                       p9=avg_memory[2]))
     return info_lose

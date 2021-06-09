@@ -1,3 +1,4 @@
+import time
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
@@ -14,7 +15,6 @@ class GUI():
         self.msg_queue = queue.Queue()
         # 将initGUI方法放到初始化方法里面，调用类的时候默认执行
         self.initGUI(root)
-
 
     # 在show_msg方法里，从Queue取出元素，输出到Text
     def show_msg(self):
@@ -45,7 +45,7 @@ class GUI():
         '''
         self.root = root
         self.root.title("获取cpu占用率工具")
-        self.root.geometry("800x600")
+        self.root.geometry("850x600")
         self.root.resizable = False
 
         w = tk.Label(self.root, text="包名：")
@@ -98,25 +98,28 @@ class GUI():
     def __show(self):
         '''
         1、调用get_cpu方法并传入当前时间
-        2、写个死循环去获取cpu数据
-        3、判断有cpu数据将添加到msg_queue队列，无数据为None时，则计算平均数。并退出循环
+        2、写个死循环去获取cpu等数据
+        3、判断有数据将添加到msg_queue队列，无数据为None时，则计算平均数。并退出循环
         '''
         time_data = get_cpu_memory_Threads.times()
         while True:
             d = get_cpu_memory_Threads.get_cpu(time_data)
-            # 判断get_cpu已停止则计算平均数
+            # 判断get_cpu，如已停止则计算平均数
             if d is not None:
+                # 将数据写入队列
                 self.msg_queue.put(d)
             else:
-                avg_count = get_cpu_memory_Threads.if_exit()
-                self.msg_queue.put(avg_count)
-                print(avg_count)
+                time.sleep(2)
+                avg = get_cpu_memory_Threads.get_avg()
+                print(avg)
+                self.msg_queue.put(avg)
                 break
 
+    # 初始化数据
     def show(self):
         '''
         点击运行按钮后调用此方法
-        1、点击运行时重置一些配置数据
+        1、点击运行时初始化一些配置数据
         2、调用getProcess根据包名获取进程列表
         3、判断getProcess，找到线程则开启一个线程来运行，未找到则抛异常
         '''

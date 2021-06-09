@@ -1,0 +1,102 @@
+INFO:Time:10:41:53, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:53, PID:1668, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:53, PID:8288, Name:firefox.exe, CPU:0.4%
+INFO:Time:10:41:53, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:53, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:53, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:53, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:53, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:41:53  
+INFO:Time:10:41:55, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:1668, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:55, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:41:55  
+INFO:Time:10:41:57, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:57, PID:1668, Name:firefox.exe, CPU:0.4%
+INFO:Time:10:41:57, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:57, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:57, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:57, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:57, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:57, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:41:57  
+INFO:Time:10:41:59, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:59, PID:1668, Name:firefox.exe, CPU:0.4%
+INFO:Time:10:41:59, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:59, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:59, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:59, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:59, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:41:59, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:41:59  
+INFO:Time:10:42:01, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:1668, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:01, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:42:01  
+INFO:Time:10:42:03, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:03, PID:1668, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:03, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:03, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:03, PID:10068, Name:firefox.exe, CPU:1.15%
+INFO:Time:10:42:03, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:03, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:03, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:42:03  
+INFO:Time:10:42:05, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:05, PID:1668, Name:firefox.exe, CPU:0.4%
+INFO:Time:10:42:05, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:05, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:05, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:05, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:05, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:05, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:42:05  
+INFO:Time:10:42:07, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:07, PID:1668, Name:firefox.exe, CPU:1.55%
+INFO:Time:10:42:07, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:07, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:07, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:07, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:07, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:07, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:42:07  
+INFO:Time:10:42:09, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:09, PID:1668, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:09, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:09, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:09, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:09, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:09, PID:13636, Name:firefox.exe, CPU:0.4%
+INFO:Time:10:42:09, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:42:09  
+INFO:Time:10:42:11, PID:92, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:11, PID:1668, Name:firefox.exe, CPU:0.4%
+INFO:Time:10:42:11, PID:8288, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:11, PID:8416, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:11, PID:10068, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:11, PID:11020, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:11, PID:13636, Name:firefox.exe, CPU:0.0%
+INFO:Time:10:42:11, PID:14260, Name:firefox.exe, CPU:0.0%
+开始时间：10:41:51    当前时间：10:42:11  
+
+--------------------------------------------------------------------------------
+
+        PID        CPU平均值(数据总数)
+        92            0.0%(10)
+        1668          0.3%(10)
+        8288          0.0%(10)
+        8416          0.0%(10)
+        10068         0.1%(10)
+        11020         0.0%(10)
+        13636         0.0%(10)
+        14260         0.0%(10)

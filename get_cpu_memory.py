@@ -13,7 +13,7 @@ import datetime
 # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓配置部分↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 #######################################################################################
 # 进程包名
-PACKAGE_NAME = "chrome.exe"
+PACKAGE_NAME = "firefox.exe"
 # 运行时长，单位分钟，输入数字如(“1”等于1分钟,“0.1”等于60*0.1分钟）
 RUN_TIME = 0.1
 # 日志写入路径
@@ -38,6 +38,7 @@ def getProcess(pName):
             process_lst.append(p)
             # 匹配的pid加入dicts字典，用来计算平均数
             dicts_cpu[p.pid] = []
+            dicts_memory[p.pid] = []
 
     # 未找到进程则抛异常
     if not process_lst:
@@ -46,8 +47,7 @@ def getProcess(pName):
     return process_lst
 
 def get_cpu(run_time):
-    for i in process_lst:
-        dicts_cpu[i.pid] = []
+
     # 运行时间
     start_time = datetime.datetime.now()
     end_times = (datetime.datetime.now() + datetime.timedelta(minutes=run_time)).strftime('%H:%M:%S')
@@ -62,13 +62,6 @@ def get_cpu(run_time):
 
     with open(PATH, 'a+') as f:  # 写入文件
         while True:
-            # # 获取内存利用率：
-            # memorys = ''
-            # for process_instance in process_lst:
-            #     memorys = process_instance.memory_percent()
-            #     # 内存数据添加到dicts字典中，按pid进行存储
-            #     dicts_memory[process_instance.pid].append(memorys)
-            # ------------------------------------
             info_lose = ''
             # 获取cpu利用率：
             for process_instance in process_lst:
@@ -83,6 +76,7 @@ def get_cpu(run_time):
             for process_instance in process_lst:
                 try:
                     cpu = process_instance.cpu_percent()
+                    # print(cpu)
                 except psutil.NoSuchProcess as e:
                     cpu = None
                     info_lose += 'WARNING:{}\n'.format(e)
@@ -99,6 +93,14 @@ def get_cpu(run_time):
                     print(cpu_data)
                     # 写入运行的cpu数据
                     f.write(str(cpu_data) + '\n')
+
+            # 获取内存利用率：
+            for process_instance in process_lst:
+                memorys = process_instance.memory_percent()
+                # print(memorys)
+                if not memorys:
+                    # 内存数据添加到dicts字典中，按pid进行存储
+                    dicts_memory[process_instance.pid].append(memorys)
 
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
             print('当前时间：{p1}  运行结束时间：{p2}'.format(p1=current_time, p2=end_times))
@@ -121,12 +123,26 @@ def get_cpu(run_time):
                 f.write(cpu_count_avg)
                 break
 
+def get_memory():
+    # 获取内存利用率：
+    for process_instance in process_lst:
+        memorys = process_instance.memory_percent()
+        print(memorys)
+        if not memorys:
+            # 内存数据添加到dicts字典中，按pid进行存储
+            dicts_memory[process_instance.pid].append(memorys)
+        else:
+            raise NameError('memory获取失败')
+    return dicts_memory
+
 
 if __name__ == '__main__':
     getProcess(PACKAGE_NAME)
-    get_cpu(RUN_TIME)
-
-
+    # get_cpu(RUN_TIME)
+    # get_memory()
+    for process_instance in process_lst:
+        print(process_instance)
+        print('-----')
 
     # # 获取内存利用率：
     # memorys = ''
