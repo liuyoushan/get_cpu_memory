@@ -1,1 +1,0 @@
-# pusutil tkinter pyinstaller
