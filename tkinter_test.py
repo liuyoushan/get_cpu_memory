@@ -44,8 +44,8 @@ class GUI():
         :param root:将调用的库tk.Tk()，变量给root了
         '''
         self.root = root
-        self.root.title("获取cpu占用率工具")
-        self.root.geometry("850x600")
+        self.root.title("PC端程序监控")
+        self.root.geometry("1000x600")
         self.root.resizable = False
 
         w = tk.Label(self.root, text="包名：")
@@ -109,7 +109,7 @@ class GUI():
                 # 将数据写入队列
                 self.msg_queue.put(d)
             else:
-                time.sleep(2)
+                time.sleep(1)
                 avg = get_cpu_memory_Threads.get_avg()
                 print(avg)
                 self.msg_queue.put(avg)

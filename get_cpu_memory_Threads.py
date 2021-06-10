@@ -5,6 +5,8 @@ import datetime
 import os
 import sys
 
+import get_all_data
+
 '''
 脚本简介：根据包名找到指定包的所有线程，打印出所有线程每秒cpu使用率，并计算平均数。
 
@@ -90,48 +92,39 @@ def get_cpu(times_data):
                 break
 
             info_lose = ''
-            # 获取cpu利用率：
-            for process_instance in process_lst:
-                try:
-                    process_instance.cpu_percent(interval=None)
-                except psutil.NoSuchProcess as e:
-                    info_lose += 'WARNING:{}\n'.format(e)  # 如果没有获取到打印警告
-            # 间隔时间
-            time.sleep(2)
 
-            # 再次获取cpu利用率：因为cpu是要第一次和第二次获取时，中间时间的cpu使用率，不然都是获取的0
-            # 获取内存利用率
+            # 获取cpu内存利用率
             for process_instance in process_lst:
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
                 try:
+                    # 获取cpu，计算cpu占用率
+                    cpu = get_all_data.GetProcessCPU_Pre(process_instance.pid)
                     # 获取内存利用率
-                    memorys = process_instance.memory_percent()
+                    memorys = get_all_data.GetProcessMEMORY(process_instance)
                     # 获取rss内存消耗
-                    memory_rss = process_instance.memory_info().rss / 1024 / 1024 / 1024
+                    memory_rss = get_all_data.GetProcessMEMORY_RSS(process_instance)
+
                     # 内存利用率添加到dicts字典中，按pid进行存储
                     dicts_memory[process_instance.pid].append(memorys)
                     # 内存rss数据添加到字典中，按pid进行存储
                     dicts_memory_rss[process_instance.pid].append(memory_rss)
-
-                    # 获取cpu利用率
-                    cpu = process_instance.cpu_percent(interval=None)
-                    # 获取的cpu除以间隔时间
-                    cpu = cpu / 2
                     # cpu数据添加到dicts字典中，按pid进行存储
                     dicts_cpu[process_instance.pid].append(cpu)
+
                     # 整合显示数据
-                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%, Memory/rss:{p5}%/{p6}GB'. \
-                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu, p5=memorys,
-                               p6=memory_rss)
+                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%, Memory/rss:{p5}%/{p6}GB, disk:{p7}, network:{p8}' \
+                        .format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu, p5=memorys,
+                                p6=memory_rss, p7='', p8='')
                     info_lose += cpu_data + '\n'
+
                 except psutil.NoSuchProcess as e:
                     info_lose += 'WARNING:线程丢失 {}\n'.format(e)
                     process_lst.remove(process_instance)
                     info_lose += '删除线程：{}\n'.format(process_instance)
 
+            time.sleep(1)  # 1秒获取一次数据
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
-            time_info = '开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=times_data)
-            info_lose += str(time_info) + '\n'
+            info_lose += str('开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=times_data)) + '\n'
             print(info_lose)
             f.write(info_lose)
 
@@ -154,17 +147,14 @@ def count_avg(number):
     :param texts:预置字符串字段，用来输出提示信息的，如需要可进行调用
     :return:返回所有线程平均值
     '''
-    info_lose = ''
-    title = ' ' * len(number) + 'PID' + ' ' * 5 + 'CPU平均值(数据总数)' + ' ' * 5 + 'memory/内存消耗(数据总数)'
-    info_lose += '-' * 80 + '\n' + '\n' + title + '\n'
-
     counts = []  # 计算出来的平均值
     thread = []  # 对应的线程
     data_count = 0  # 数据总数
+
     for k, v in number.items():
         n = 0
         for i in range(len(v)):
-            n += v[i]
+            n += float(v[i])
         n = n / len(v)
         counts.append(n)
         thread.append(k)
@@ -172,6 +162,7 @@ def count_avg(number):
             data_count += len(number[k])
 
     return counts, thread, data_count
+
 
 def get_avg():
     '''
@@ -182,12 +173,14 @@ def get_avg():
     avg_memory = count_avg(dicts_memory)
     avg_memory_rss = count_avg(dicts_memory_rss)
 
-    info_lose = '-' * 80 + '\n'
-    info_lose += ' ' * 5 + 'PID' + ' ' * 5 + 'CPU平均值(数据总数)' + ' ' * 5 + 'memory/内存rss(数据总数)' + '\n'
+    info_lose = '运行结束！！！' + '\n'
+    info_lose += ('-' * 40) + '计算平均值' + ('-' * 40) + '\n'
+    info_lose += ' ' * 5 + 'PID' + ' ' * 5 + 'CPU(数据总数)' + ' ' * 5 + 'Memory利用率/RSS消耗(数据总数)' \
+                 + ' ' * 5 + 'disk' + ' ' * 5 + 'network' + '\n'
     for i in range(len(avg_cpu[0])):
         space = ' ' * (13 - len(str(avg_cpu[1][i])))
-        info_lose += ('{p1}{p2}{p3}{p4:.1f}%({p5}){p8}{p6:.1f}% / {p7:.4f}GB({p9})\n'.format
-                      (p1=' ' * 4, p2=avg_cpu[1][i], p3=space,p4=avg_cpu[0][i], p5=avg_cpu[2],
+        info_lose += ('{p1}{p2}{p3}{p4:.2f}%({p5}){p8}{p6:.2f}% / {p7:.4f}GB({p9})\n'.format
+                      (p1=' ' * 4, p2=avg_cpu[1][i], p3=space, p4=avg_cpu[0][i], p5=avg_cpu[2],
                        p6=avg_memory[0][i], p7=avg_memory_rss[0][i], p8=' ' * 10,
                        p9=avg_memory[2]))
     return info_lose
