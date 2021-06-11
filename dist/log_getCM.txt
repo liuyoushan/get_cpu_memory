@@ -1,0 +1,54 @@
+INFO:Time:18:38:59, PID:2920, Name:firefox.exe, CPU:0.00%, Memory/rss:1.072307982565199%/0.08455657958984375GB, disk:, network:
+INFO:Time:18:38:59, PID:6180, Name:firefox.exe, CPU:0.16%, Memory/rss:2.3284940956785496%/0.18361282348632812GB, disk:, network:
+INFO:Time:18:38:59, PID:11860, Name:firefox.exe, CPU:0.01%, Memory/rss:0.9233575053334817%/0.07281112670898438GB, disk:, network:
+INFO:Time:18:38:59, PID:12860, Name:firefox.exe, CPU:0.00%, Memory/rss:0.6825889034555156%/0.05382537841796875GB, disk:, network:
+INFO:Time:18:38:59, PID:13092, Name:firefox.exe, CPU:0.73%, Memory/rss:4.571168721851069%/0.3604583740234375GB, disk:, network:
+INFO:Time:18:38:59, PID:13264, Name:firefox.exe, CPU:0.67%, Memory/rss:4.980141548910809%/0.39270782470703125GB, disk:, network:
+INFO:Time:18:38:59, PID:13276, Name:firefox.exe, CPU:0.00%, Memory/rss:0.2718745313550672%/0.0214385986328125GB, disk:, network:
+INFO:Time:18:38:59, PID:13444, Name:firefox.exe, CPU:0.01%, Memory/rss:1.0205453938552485%/0.080474853515625GB, disk:, network:
+INFO:Time:18:38:59, PID:13668, Name:firefox.exe, CPU:0.02%, Memory/rss:1.7064238823876583%/0.13455963134765625GB, disk:, network:
+INFO:Time:18:38:59, PID:14384, Name:firefox.exe, CPU:0.58%, Memory/rss:1.8095136735473822%/0.14268875122070312GB, disk:, network:
+INFO:Time:18:38:59, PID:14756, Name:firefox.exe, CPU:0.09%, Memory/rss:2.1693846057093653%/0.1710662841796875GB, disk:, network:
+INFO:Time:18:38:59, PID:14900, Name:firefox.exe, CPU:0.27%, Memory/rss:2.2426262499213885%/0.17684173583984375GB, disk:, network:
+开始时间：18:38:59    当前时间：18:39:00  
+INFO:Time:18:39:00, PID:2920, Name:firefox.exe, CPU:0.00%, Memory/rss:1.072307982565199%/0.08455657958984375GB, disk:, network:
+INFO:Time:18:39:00, PID:6180, Name:firefox.exe, CPU:0.00%, Memory/rss:2.330574274477174%/0.18377685546875GB, disk:, network:
+INFO:Time:18:39:00, PID:11860, Name:firefox.exe, CPU:0.00%, Memory/rss:0.9233575053334817%/0.07281112670898438GB, disk:, network:
+INFO:Time:18:39:00, PID:12860, Name:firefox.exe, CPU:0.00%, Memory/rss:0.6825889034555156%/0.05382537841796875GB, disk:, network:
+INFO:Time:18:39:00, PID:13092, Name:firefox.exe, CPU:0.00%, Memory/rss:4.571168721851069%/0.3604583740234375GB, disk:, network:
+INFO:Time:18:39:00, PID:13264, Name:firefox.exe, CPU:0.00%, Memory/rss:4.980141548910809%/0.39270782470703125GB, disk:, network:
+INFO:Time:18:39:00, PID:13276, Name:firefox.exe, CPU:0.00%, Memory/rss:0.2718745313550672%/0.0214385986328125GB, disk:, network:
+INFO:Time:18:39:00, PID:13444, Name:firefox.exe, CPU:0.00%, Memory/rss:1.0205453938552485%/0.080474853515625GB, disk:, network:
+INFO:Time:18:39:00, PID:13668, Name:firefox.exe, CPU:0.00%, Memory/rss:1.7064238823876583%/0.13455963134765625GB, disk:, network:
+INFO:Time:18:39:00, PID:14384, Name:firefox.exe, CPU:0.00%, Memory/rss:1.8095136735473822%/0.14268875122070312GB, disk:, network:
+INFO:Time:18:39:00, PID:14756, Name:firefox.exe, CPU:0.00%, Memory/rss:2.1693846057093653%/0.1710662841796875GB, disk:, network:
+INFO:Time:18:39:00, PID:14900, Name:firefox.exe, CPU:0.00%, Memory/rss:2.2426262499213885%/0.17684173583984375GB, disk:, network:
+开始时间：18:38:59    当前时间：18:39:01  
+INFO:Time:18:39:01, PID:2920, Name:firefox.exe, CPU:0.20%, Memory/rss:1.072307982565199%/0.08455657958984375GB, disk:, network:
+INFO:Time:18:39:01, PID:6180, Name:firefox.exe, CPU:0.00%, Memory/rss:2.329606749454558%/0.1837005615234375GB, disk:, network:
+INFO:Time:18:39:01, PID:11860, Name:firefox.exe, CPU:0.00%, Memory/rss:0.9233575053334817%/0.07281112670898438GB, disk:, network:
+INFO:Time:18:39:01, PID:12860, Name:firefox.exe, CPU:0.20%, Memory/rss:0.6825889034555156%/0.05382537841796875GB, disk:, network:
+INFO:Time:18:39:01, PID:13092, Name:firefox.exe, CPU:1.56%, Memory/rss:4.571168721851069%/0.3604583740234375GB, disk:, network:
+INFO:Time:18:39:01, PID:13264, Name:firefox.exe, CPU:0.00%, Memory/rss:4.980141548910809%/0.39270782470703125GB, disk:, network:
+INFO:Time:18:39:01, PID:13276, Name:firefox.exe, CPU:0.00%, Memory/rss:0.2718745313550672%/0.0214385986328125GB, disk:, network:
+INFO:Time:18:39:01, PID:13444, Name:firefox.exe, CPU:0.00%, Memory/rss:1.0205453938552485%/0.080474853515625GB, disk:, network:
+INFO:Time:18:39:01, PID:13668, Name:firefox.exe, CPU:0.19%, Memory/rss:1.7064238823876583%/0.13455963134765625GB, disk:, network:
+INFO:Time:18:39:01, PID:14384, Name:firefox.exe, CPU:3.65%, Memory/rss:1.8095136735473822%/0.14268875122070312GB, disk:, network:
+INFO:Time:18:39:01, PID:14756, Name:firefox.exe, CPU:0.19%, Memory/rss:2.1693846057093653%/0.1710662841796875GB, disk:, network:
+INFO:Time:18:39:01, PID:14900, Name:firefox.exe, CPU:0.38%, Memory/rss:2.2426746261725192%/0.17684555053710938GB, disk:, network:
+开始时间：18:38:59    当前时间：18:39:02  
+运行结束！！！
+----------------------------------------计算平均值----------------------------------------
+     PID     CPU(数据总数)     Memory利用率/RSS消耗(数据总数)     disk     network
+    2920         0.07%(3)          1.07% / 0.0846GB(3)
+    6180         0.05%(3)          2.33% / 0.1837GB(3)
+    11860        0.00%(3)          0.92% / 0.0728GB(3)
+    12860        0.07%(3)          0.68% / 0.0538GB(3)
+    13092        0.76%(3)          4.57% / 0.3605GB(3)
+    13264        0.22%(3)          4.98% / 0.3927GB(3)
+    13276        0.00%(3)          0.27% / 0.0214GB(3)
+    13444        0.00%(3)          1.02% / 0.0805GB(3)
+    13668        0.07%(3)          1.71% / 0.1346GB(3)
+    14384        1.41%(3)          1.81% / 0.1427GB(3)
+    14756        0.09%(3)          2.17% / 0.1711GB(3)
+    14900        0.22%(3)          2.24% / 0.1768GB(3)
