@@ -130,14 +130,15 @@ class GUI():
         # 每次点击运行要先清空process_lst列表
         get_cpu_memory_Threads.process_lst = []
         # 调用getProcess根据包名获取进程列表
-        getprocess = get_cpu_memory_Threads.getProcess()
+        get_cpu_memory_Threads.getProcess()
+
         # 首次点击运行时清空log文件
         if self.numb < 1:
             with open(get_cpu_memory_Threads.PATH, 'w'):
                 print('log文件已清空')
             self.numb += 1
 
-        if getprocess:
+        if get_cpu_memory_Threads.process_lst:
             # 创建一个线程运行
             t = threading.Thread(target=self.__show, args=())
             t.start()

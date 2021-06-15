@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import psutil
-import time
-import datetime,cpu_suanfa
+import time,os,sys
+import datetime
 
 '''
 脚本简介：
@@ -13,11 +13,12 @@ import datetime,cpu_suanfa
 # ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓配置部分↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 #######################################################################################
 # 进程包名
-PACKAGE_NAME = "firefox.exe"
+PACKAGE_NAME = "obs64.exe"
 # 运行时长，单位分钟，输入数字如(“1”等于1分钟,“0.1”等于60*0.1分钟）
 RUN_TIME = 5
 # 日志写入路径
-PATH = 'D:\logs\get_cpu_memory.txt'
+PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
+PATH = os.path.join(PATH, 'log_getCM.txt')
 
 # 定义一个进程列表
 process_lst = []
@@ -63,43 +64,38 @@ def get_cpu(run_time):
     with open(PATH, 'a+') as f:  # 写入文件
         while True:
             info_lose = ''
-            # # 获取cpu利用率：
-            # for process_instance in process_lst:
-            #     try:
-            #         process_instance.cpu_percent(None)
-            #     except psutil.NoSuchProcess as e:
-            #         info_lose += 'WARNING:{}\n'.format(e)
-            # # 间隔时间
-            # time.sleep(2)
-            #
-            # # 再次获取cpu利用率：因为cpu是要第一次和第二次获取时，中间时间的cpu使用率，不然都是获取的0
-            # for process_instance in process_lst:
-            #     try:
-            #         cpu = process_instance.cpu_percent()
-            #         # print(cpu)
-            #     except psutil.NoSuchProcess as e:
-            #         cpu = None
-            #         info_lose += 'WARNING:{}\n'.format(e)
-            #         print(info_lose)
-            #         f.write(str(info_lose) + '\n')
-            #
-            #     localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
-            #     if cpu != None:
-            #         # cpu数据添加到dicts字典中，按pid进行存储
-            #         dicts_cpu[process_instance.pid].append(cpu)
-            #
-            #         cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.\
-            #             format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
-            #         print(cpu_data)
-            #         # 写入运行的cpu数据
-            #         f.write(str(cpu_data) + '\n')
-            # for i in process_lst:
-            #     w=cpu_suanfa.GetProcessCPU_Pre(i.pid)
-            time.sleep(1)
-            for i in process_lst:
-                w=cpu_suanfa.GetProcessCPU_Pre(i.pid)
+            # 获取cpu利用率：
+            for process_instance in process_lst:
+                try:
+                    process_instance.cpu_percent(None)
+                except psutil.NoSuchProcess as e:
+                    info_lose += 'WARNING:{}\n'.format(e)
+            # 间隔时间
+            time.sleep(2)
 
-                print(w)
+            # 再次获取cpu利用率：因为cpu是要第一次和第二次获取时，中间时间的cpu使用率，不然都是获取的0
+            for process_instance in process_lst:
+                try:
+                    cpu = process_instance.cpu_percent()
+                    # print(cpu)
+                except psutil.NoSuchProcess as e:
+                    cpu = None
+                    info_lose += 'WARNING:{}\n'.format(e)
+                    print(info_lose)
+                    f.write(str(info_lose) + '\n')
+
+                localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
+                if cpu != None:
+                    # cpu数据添加到dicts字典中，按pid进行存储
+                    dicts_cpu[process_instance.pid].append(cpu)
+
+                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%'.\
+                        format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu)
+                    print(cpu_data)
+                    # 写入运行的cpu数据
+                    f.write(str(cpu_data) + '\n')
+
+
             # 获取内存利用率：
             for process_instance in process_lst:
                 memorys = process_instance.memory_percent()
