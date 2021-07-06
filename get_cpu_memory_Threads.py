@@ -90,7 +90,6 @@ def get_cpu(times_data):
             if if_code is False:
                 f.write(get_avg())
                 break
-
             info_lose = ''
 
             # 获取cpu内存利用率

@@ -146,7 +146,6 @@ class GUI():
             error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
                 .format(get_cpu_memory_Threads.PACKAGE_NAME)
             self.text.insert("insert", '\n' + error + '\n')
-
     def end_threads(self):
         '''
         点击结束运行将code设置为False
