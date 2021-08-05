@@ -2,8 +2,7 @@
 获取进程cpu、内存
 简书：https://www.jianshu.com/p/feb479089d82
 
-![图片](https://user-images.githubusercontent.com/74752752/128282071-f881bc76-9f85-4667-9592-e90de2ae5cca.png)
-
+![图片](https://user-images.githubusercontent.com/74752752/128282145-07a6e9c3-7974-4ffd-950a-875b1df8c49f.png)
 
 
 
