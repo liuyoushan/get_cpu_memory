@@ -1,8 +1,9 @@
 # get_cpu_memory
 简介：获取PC端进程cpu、内存，并计算平均值
-
-
 示例：
+
+
+
 ![10453545-f55ed0a177988c76](https://user-images.githubusercontent.com/74752752/128282191-d8d5e930-6284-4ef9-818d-6ca0dea32dbe.png)
 
 
