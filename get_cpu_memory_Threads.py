@@ -124,7 +124,7 @@ def get_cpu(times_data):
             time.sleep(1)  # 1秒获取一次数据
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
             info_lose += str('开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=times_data)) + '\n'
-            print(info_lose)
+            # print(info_lose)
             f.write(info_lose)
 
             # 如果所有进程都丢失了，则退出循环
@@ -173,8 +173,9 @@ def get_avg():
     avg_memory_rss = count_avg(dicts_memory_rss)
 
     info_lose = '运行结束！！！' + '\n'
-    info_lose += ('-' * 40) + '计算平均值' + ('-' * 40) + '\n'
-    info_lose += ' ' * 5 + 'PID' + ' ' * 5 + 'CPU(数据总数)' + ' ' * 5 + 'Memory利用率/RSS消耗(数据总数)' \
+    info_lose += ('-' * 40) + ' E N D ' + ('-' * 40) + '\n'
+    info_lose += '各线程平均值：' + '\n'
+    info_lose += ' ' * 5 + 'PID' + ' ' * 5 + 'CPU(计算数)' + ' ' * 5 + 'Memory利用率/RSS消耗(计算数)' \
                  + ' ' * 5 + 'disk' + ' ' * 5 + 'network' + '\n'
     for i in range(len(avg_cpu[0])):
         space = ' ' * (13 - len(str(avg_cpu[1][i])))
@@ -182,4 +183,14 @@ def get_avg():
                       (p1=' ' * 4, p2=avg_cpu[1][i], p3=space, p4=avg_cpu[0][i], p5=avg_cpu[2],
                        p6=avg_memory[0][i], p7=avg_memory_rss[0][i], p8=' ' * 10,
                        p9=avg_memory[2]))
+
+    # 所有线程的平均数相加，计算出这个程序占用的资源
+    cpu, memory, rss = 0, 0, 0
+    for c, m, r in zip(avg_cpu[0], avg_memory[0], avg_memory_rss[0]):
+        cpu += c
+        memory += m
+        rss += r
+    info_lose += '程序总占用平均值：' + '\n'
+    info_lose += '             CPU:{:.2f}     Memory:{:.2f}     RSS:{:.4f}'.format(cpu, memory, rss)
+
     return info_lose

@@ -5,6 +5,7 @@ from tkinter import ttk
 import get_cpu_memory_Threads
 import threading
 import queue
+import tkinter.messagebox  # 弹出对话框
 
 
 class GUI():
@@ -26,9 +27,25 @@ class GUI():
         while not self.msg_queue.empty():
             content = self.msg_queue.get()
             if content is not None:
-                self.text.insert("insert", content)
-                # 保持焦点在行尾
-                self.text.see("end")
+
+                self.text.insert(END, content)
+                # 在倒数第30行以上时，就执行保持焦点在行尾
+                current_row = self.text.index(INSERT)
+                current_row = current_row.split('.')
+                current_row = int(current_row[0])
+                end_row = self.text.index('end')
+                if current_row > float(end_row) - 40:
+                    # 移动光标到最底部
+                    self.text.mark_set('insert', END)
+                    # 保持焦点在行尾
+                    self.text.see(END)
+
+                # # 获取滚动条的Y轴位置（范围0.0~1.0），如果大于0.98就保持焦点在行尾
+                # scrollBar_Y = self.scrollBar.get()
+                # if scrollBar_Y[0] > 0.98:
+                #     # print('在最底部：{}'.format(scrollBar_Y[0]))
+                #     # # 保持焦点在行尾
+                #     self.text.see(END)
             else:
                 # print('self.msg_queue.get 为空')
                 break
@@ -48,43 +65,52 @@ class GUI():
         self.root.geometry("1000x600")
         self.root.resizable = False
 
-        w = tk.Label(self.root, text="包名：")
-        w.pack(side=TOP)
+        w = tk.Label(self.root, text="程序包名：")
+        w.place(x=10, y=10)
 
-        self.E1 = Entry(self.root, bd=5, bg='white')
-        self.E1.pack(side=TOP)
+        # 输入框设置默认值
+        addr = tkinter.StringVar()
+        addr.set('firefox.exe')
+        self.E1 = Entry(self.root, bd=2, bg='white', textvariable=addr)
+        self.E1.place(x=70, y=10)
+
+        _tips = tk.Label(self.root, text="PS：鼠标焦点切换到底部可以自动滚动")
+        _tips.place(x=10, y=560)
 
         # 运行按钮
-        self.btn = ttk.Button(self.root, text="运行", takefocus=0, command=self.show)
-        self.btn.pack(side=TOP)
+        self.btn = Button(self.root, text="开始", takefocus=0, command=self.show,
+                          bg='green', width=8, height=0, font=('Helvetica', '10'))
+        self.btn.place(x=550, y=10)
 
         # 结束运行按钮
-        self.btn = ttk.Button(self.root, text="结束运行", takefocus=0, command=self.end_threads)
-        self.btn.pack(side=TOP)
-
-        # 设置滚动条
-        self.scrollBar = ttk.Scrollbar(self.root)
-        self.scrollBar.pack(side="right", fill="y")
-
-        # Text（文本）组件用于显示和处理多行文本
-        self.text = tk.Text(self.root, height=50, bd=1, relief="solid", bg='PaleGreen',
-                            yscrollcommand=self.scrollBar.set)
-        logPrint = ('⬇' * 40) + '日志打印' + ('⬇' * 40)
-        self.text.insert("insert", 'Tips：\n'
-                                   '     1、填写包名后运行，如：chrome.exe\n'
-                                   '     2、点击【结束运行】自动计算平均值\n'
-                                   '     3、日志保存路径：运行程序同级目录下\n\n'
-                         + '\n' + logPrint + '\n')
+        self.btn = Button(self.root, text="结束", takefocus=0, command=self.end_threads,
+                          bg='red', width=8, height=0, font=('Helvetica', '10'))
+        self.btn.place(x=640, y=10)
 
         # 清空text控件内容
         def deletes():
             self.text.delete(0.0, tk.END)
 
         # 清空按钮
-        self.btn = ttk.Button(self.root, text="清空", takefocus=0, command=deletes)
-        self.btn.pack(side=TOP)
+        self.btn = Button(self.root, text="清空内容", takefocus=0, command=deletes,
+                          width=8, height=0, font=('Helvetica', '10'))
+        self.btn.place(x=730, y=10)
 
-        self.text.pack(side="top", fill="both", padx=10, pady=10)
+        # 设置滚动条
+        self.scrollBar = ttk.Scrollbar(self.root)
+        self.scrollBar.pack(side="right", fill="y")
+
+        # Text（文本）组件用于显示和处理多行文本
+        self.text = tk.Text(self.root, height=50, width=110, bd=1, relief="solid", bg='PaleGreen',
+                            yscrollcommand=self.scrollBar.set)
+        logPrint = ('⬇' * 40) + '日志打印' + ('⬇' * 40)
+        self.text.insert("insert", 'Tips：\n'
+                                   '     1、填写包名后运行，如：firefox.exe\n'
+                                   '     2、点击【结束运行】自动计算平均值\n'
+                                   '     3、日志保存路径：运行程序同级目录下\n\n'
+                         + '\n' + logPrint + '\n')
+
+        self.text.pack(side="top", fill="both", padx=10, pady=50)
         # # 垂直滚动条绑定text
         self.scrollBar.config(command=self.text.yview)
 
@@ -146,12 +172,16 @@ class GUI():
             error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
                 .format(get_cpu_memory_Threads.PACKAGE_NAME)
             self.text.insert("insert", '\n' + error + '\n')
+
     def end_threads(self):
         '''
         点击结束运行将code设置为False
         :return:
         '''
-        get_cpu_memory_Threads.if_code = False
+        # 确认框
+        a = tkinter.messagebox.askokcancel('提示', '要执行此操作吗？')
+        if a:
+            get_cpu_memory_Threads.if_code = False
 
 
 if __name__ == "__main__":

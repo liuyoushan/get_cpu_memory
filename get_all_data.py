@@ -1,11 +1,16 @@
-import psutil,time
+import psutil, time
+
 _timer = getattr(time, 'monotonic', time.time)
 num_cpus = psutil.cpu_count() or 1
+
 
 def timer():
     return _timer() * num_cpus
 
+
 pid_cpuinfo = {}
+
+
 def GetProcessCPU_Pre(id):
     p = psutil.Process(id)
     pt = p.cpu_times()
@@ -22,9 +27,11 @@ def GetProcessCPU_Pre(id):
     pid_cpuinfo[id] = [st1, pt1_0, pt1_1]
     return "{:.2f}".format(cpus_percent)
 
+
 def GetProcessMEMORY(process_instance):
     memorys = process_instance.memory_percent()
     return memorys
+
 
 def GetProcessMEMORY_RSS(process_instance):
     memory_rss = process_instance.memory_info().rss / 1024 / 1024 / 1024
