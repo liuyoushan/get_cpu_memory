@@ -191,6 +191,6 @@ def get_avg():
         memory += m
         rss += r
     info_lose += '程序总占用平均值：' + '\n'
-    info_lose += '             CPU:{:.2f}     Memory:{:.2f}     RSS:{:.4f}'.format(cpu, memory, rss)
+    info_lose += '             CPU:{:.2f}%     Memory:{:.2f}%     RSS:{:.4f}GB'.format(cpu, memory, rss)
 
     return info_lose

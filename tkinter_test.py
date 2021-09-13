@@ -1,3 +1,4 @@
+import os
 import time
 import tkinter as tk
 from tkinter import *
@@ -6,7 +7,12 @@ import get_cpu_memory_Threads
 import threading
 import queue
 import tkinter.messagebox  # 弹出对话框
+# 图片生成
+import matplotlib.pyplot as plt
+import matplotlib
+import dateutil
 
+run_button = True
 
 class GUI():
     def __init__(self, root):
@@ -34,7 +40,7 @@ class GUI():
                 current_row = current_row.split('.')
                 current_row = int(current_row[0])
                 end_row = self.text.index('end')
-                if current_row > float(end_row) - 40:
+                if current_row > float(end_row) - 35:
                     # 移动光标到最底部
                     self.text.mark_set('insert', END)
                     # 保持焦点在行尾
@@ -96,6 +102,14 @@ class GUI():
                           width=8, height=0, font=('Helvetica', '10'))
         self.btn.place(x=730, y=10)
 
+
+        # 生成趋势图
+        # self.btn = Button(self.root, text="生成趋势图", takefocus=0, command=test_add.add,
+        #                   width=8, height=0, font=('Helvetica', '10'))
+        self.btn = Button(self.root, text="生成趋势图", takefocus=0, command=self.plt,
+                          width=8, height=0, font=('Helvetica', '10'))
+        self.btn.place(x=830, y=10)
+
         # 设置滚动条
         self.scrollBar = ttk.Scrollbar(self.root)
         self.scrollBar.pack(side="right", fill="y")
@@ -149,29 +163,35 @@ class GUI():
         2、调用getProcess根据包名获取进程列表
         3、判断getProcess，找到线程则开启一个线程来运行，未找到则抛异常
         '''
-        # 将在输入框控件（E1）获取的包名赋值给PACKAGE_NAME变量（执行的包名）
-        get_cpu_memory_Threads.PACKAGE_NAME = str(self.E1.get())
-        # 点击运行重置旗标判断的属性为True（用来判断是否结束运行的属性）
-        get_cpu_memory_Threads.if_code = True
-        # 每次点击运行要先清空process_lst列表
-        get_cpu_memory_Threads.process_lst = []
-        # 调用getProcess根据包名获取进程列表
-        get_cpu_memory_Threads.getProcess()
+        # 判断按钮状态
+        global run_button
+        if run_button:
+            run_button = False
+            # 将在输入框控件（E1）获取的包名赋值给PACKAGE_NAME变量（执行的包名）
+            get_cpu_memory_Threads.PACKAGE_NAME = str(self.E1.get())
+            # 点击运行重置旗标判断的属性为True（用来判断是否结束运行的属性）
+            get_cpu_memory_Threads.if_code = True
+            # 每次点击运行要先清空process_lst列表
+            get_cpu_memory_Threads.process_lst = []
+            # 调用getProcess根据包名获取进程列表
+            get_cpu_memory_Threads.getProcess()
 
-        # 首次点击运行时清空log文件
-        if self.numb < 1:
-            with open(get_cpu_memory_Threads.PATH, 'w'):
-                print('log文件已清空')
-            self.numb += 1
+            # 首次点击运行时清空log文件
+            if self.numb < 1:
+                with open(get_cpu_memory_Threads.PATH, 'w'):
+                    print('log文件已清空')
+                self.numb += 1
 
-        if get_cpu_memory_Threads.process_lst:
-            # 创建一个线程运行
-            t = threading.Thread(target=self.__show, args=())
-            t.start()
+            if get_cpu_memory_Threads.process_lst:
+                # 创建一个线程运行
+                t = threading.Thread(target=self.__show, args=())
+                t.start()
+            else:
+                error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
+                    .format(get_cpu_memory_Threads.PACKAGE_NAME)
+                self.text.insert("insert", '\n' + error + '\n')
         else:
-            error = 'ERROR:Package name({}) not found, please confirm whether the program has started' \
-                .format(get_cpu_memory_Threads.PACKAGE_NAME)
-            self.text.insert("insert", '\n' + error + '\n')
+            tkinter.messagebox.showinfo("提示", '请勿重复运行！')
 
     def end_threads(self):
         '''
@@ -182,6 +202,64 @@ class GUI():
         a = tkinter.messagebox.askokcancel('提示', '要执行此操作吗？')
         if a:
             get_cpu_memory_Threads.if_code = False
+            global run_button
+            run_button = True
+
+
+
+
+    # 创建图
+    def plt(self):
+        cpu = get_cpu_memory_Threads.dicts_cpu
+        memory=get_cpu_memory_Threads.dicts_memory
+        memory_rss=get_cpu_memory_Threads.dicts_memory_rss
+        if cpu and memory and memory_rss:
+            list_cpu = self.plt_count(cpu)
+            list_memory = self.plt_count(memory)
+            list_rss = self.plt_count(memory_rss)
+            try:
+                plt.clf()  # 清图
+                plt.title('cpu(%)')
+                plt.xlabel(' Running time ')
+                plt.ylabel(' Data value ')
+                plt.plot(list_cpu, color='red', linewidth=2.0, linestyle='--')
+                plt.savefig('cpu.png')
+                plt.clf() # 清图
+                plt.title('memory(%)')
+                plt.xlabel(' Running time ')
+                plt.ylabel(' Data value ')
+                plt.plot(list_memory, color='red', linewidth=2.0, linestyle='--')
+                plt.savefig('memory.png')
+                plt.clf()  # 清图
+                plt.title('memory_rss(%)')
+                plt.xlabel(' Running time ')
+                plt.ylabel(' Data value ')
+                plt.plot(list_rss, color='red', linewidth=2.0, linestyle='--')
+                plt.savefig('memory_rss.png')
+                plt.show() # 在编译器里面生成
+                tkinter.messagebox.showinfo("提示", '趋势图成功生成！\nps：当前程序目录下')
+            except Exception as e:
+                tkinter.messagebox.showinfo("提示", '图片生成失败，error：{}'.format(e))
+        else:
+            tkinter.messagebox.showinfo("提示", '未获取到数据！！请先运行程序')
+
+    def plt_count(self,resources_number):
+        number = [len(v) for k, v in resources_number.items()]
+        # 所有线程的占用率加在一起，等于程序总占用，每次
+        _list = []
+        # if number:
+        for i in range(number[0]):
+            _count = 0
+            for k, v in resources_number.items():
+                # print(v[i])
+                _count += float(v[i])
+            _list.append(_count)
+        # print(_list)
+        return _list
+
+
+
+
 
 
 if __name__ == "__main__":
