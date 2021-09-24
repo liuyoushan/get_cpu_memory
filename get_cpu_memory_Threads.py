@@ -27,8 +27,8 @@ meaningless 0.0 value which you are supposed to ignore.
 # 进程包名
 PACKAGE_NAME = ''
 # 日志写入路径
-PATH = os.path.dirname(os.path.realpath(sys.argv[0]))
-PATH = os.path.join(PATH, 'log_getCM.txt')
+PATH_sys = os.path.dirname(os.path.realpath(sys.argv[0]))
+PATH = os.path.join(PATH_sys, 'log_getCM.txt')
 # PATH = os.path.join(os.path.dirname(__file__), 'logs.txt')
 # 定义一个进程列表
 process_lst = []
@@ -102,6 +102,8 @@ def get_cpu(times_data):
                     memorys = get_all_data.GetProcessMEMORY(process_instance)
                     # 获取rss内存消耗
                     memory_rss = get_all_data.GetProcessMEMORY_RSS(process_instance)
+                    # # 获取磁盘读写
+                    # disk = get_all_data.GetProcessDISK(process_instance)
 
                     # 内存利用率添加到dicts字典中，按pid进行存储
                     dicts_memory[process_instance.pid].append(memorys)
@@ -111,9 +113,9 @@ def get_cpu(times_data):
                     dicts_cpu[process_instance.pid].append(cpu)
 
                     # 整合显示数据
-                    cpu_data = 'INFO:Time:{p1}, PID:{p2}, Name:{p3}, CPU:{p4}%, Memory/rss:{p5}%/{p6}GB, disk:{p7}, network:{p8}' \
+                    cpu_data = 'INFO:Time:{p1}, PID:{p2} Name:{p3} CPU:{p4}% Memory/rss:{p5}%/{p6}GB disk:{p7} network:{p8}' \
                         .format(p1=localtime, p2=process_instance.pid, p3=PACKAGE_NAME, p4=cpu, p5=memorys,
-                                p6=memory_rss, p7='', p8='')
+                                p6=memory_rss, p7='/', p8='/')
                     info_lose += cpu_data + '\n'
 
                 except psutil.NoSuchProcess as e:
@@ -123,7 +125,7 @@ def get_cpu(times_data):
 
             time.sleep(1)  # 1秒获取一次数据
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
-            info_lose += str('开始时间：{p2}    当前时间：{p1}  '.format(p1=current_time, p2=times_data)) + '\n'
+            info_lose += str('start_time:{p2}    now_Time:{p1}  '.format(p1=current_time, p2=times_data)) + '\n'
             # print(info_lose)
             f.write(info_lose)
 

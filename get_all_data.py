@@ -30,9 +30,21 @@ def GetProcessCPU_Pre(id):
 
 def GetProcessMEMORY(process_instance):
     memorys = process_instance.memory_percent()
-    return memorys
+    return "{:.2f}".format(memorys)
 
 
 def GetProcessMEMORY_RSS(process_instance):
     memory_rss = process_instance.memory_info().rss / 1024 / 1024 / 1024
-    return memory_rss
+    return "{:.2f}".format(memory_rss)
+
+def GetProcessDISK(process_instance):
+
+
+    disk=process_instance.io_counters()
+    print(disk)
+
+    d = psutil.net_io_counters()
+    ins = d.bytes_recv
+    insb = d.bytes_sent
+    print(ins,insb)
+    return disk
