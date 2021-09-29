@@ -2,8 +2,6 @@ import psutil, time
 
 _timer = getattr(time, 'monotonic', time.time)
 num_cpus = psutil.cpu_count() or 1
-
-
 def timer():
     return _timer() * num_cpus
 
@@ -38,8 +36,6 @@ def GetProcessMEMORY_RSS(process_instance):
     return "{:.2f}".format(memory_rss)
 
 def GetProcessDISK(process_instance):
-
-
     disk=process_instance.io_counters()
     print(disk)
 

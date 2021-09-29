@@ -6,6 +6,7 @@ import os
 import sys
 
 import get_all_data
+from get_cpu_memory.get_cpu_memory import tkinter_PC
 
 '''
 脚本简介：根据包名找到指定包的所有线程，打印出所有线程每秒cpu使用率，并计算平均数。
@@ -32,15 +33,22 @@ PATH = os.path.join(PATH_sys, 'log_getCM.txt')
 # PATH = os.path.join(os.path.dirname(__file__), 'logs.txt')
 # 定义一个进程列表
 process_lst = []
+
 # 存储进程pid和对应的数据
 dicts_cpu = {}
 dicts_memory = {}
 dicts_memory_rss = {}
+# 程序总占用
+count_cpu = []
+count_memory = []
+count_memoryRSS = []
+
 # 旗标判断，用来判断是否退出运行
 if_code = True
+ck_ = True
 
 
-# 获取进程名为Python的进程对象列表,并添加到指定列表
+# 获取程序名的所有进程对象列表,并添加到指定列表
 def getProcess():
     '''
     根据包名找到该包名下的所有线程，并添加到列表
@@ -92,6 +100,8 @@ def get_cpu(times_data):
                 break
             info_lose = ''
 
+            # 所有线程占用相加，得出程序总占用
+            c, m, r = 0, 0, 0
             # 获取cpu内存利用率
             for process_instance in process_lst:
                 localtime = time.strftime('%H:%M:%S', time.localtime(time.time()))
@@ -104,6 +114,11 @@ def get_cpu(times_data):
                     memory_rss = get_all_data.GetProcessMEMORY_RSS(process_instance)
                     # # 获取磁盘读写
                     # disk = get_all_data.GetProcessDISK(process_instance)
+
+                    # 程序总占用
+                    c += float(cpu)
+                    m += float(memorys)
+                    r += float(memory_rss)
 
                     # 内存利用率添加到dicts字典中，按pid进行存储
                     dicts_memory[process_instance.pid].append(memorys)
@@ -122,6 +137,14 @@ def get_cpu(times_data):
                     info_lose += 'WARNING:线程丢失 {}\n'.format(e)
                     process_lst.remove(process_instance)
                     info_lose += '删除线程：{}\n'.format(process_instance)
+
+            # # 判断如果页面不存在就强杀进程
+            # monitor_main(times())
+
+            # 程序总占用率
+            count_cpu.append(c)
+            count_memory.append(m)
+            count_memoryRSS.append(r)
 
             time.sleep(1)  # 1秒获取一次数据
             current_time = datetime.datetime.now().strftime('%H:%M:%S')
@@ -194,5 +217,63 @@ def get_avg():
         rss += r
     info_lose += '程序总占用平均值：' + '\n'
     info_lose += '             CPU:{:.2f}%     Memory:{:.2f}%     RSS:{:.4f}GB'.format(cpu, memory, rss)
-
     return info_lose
+
+'''
+以下代码可以实现每5秒去查找一次线程，实现强制杀死进程
+'''
+# # 上次判断时间，被减时间
+# tm_ = ''
+# n = 0 # 秒数
+# def monitor_main(times_n):
+#     '''获取程序名的所有进程对象列表,并添加到指定列表
+#     1、为空则给tm_赋值，且不做判断处理
+#     2、tm不为空则判断，强制杀死程序
+#     :param times_n:
+#     :return:
+#     '''
+#     data_processing = times_n.replace(':', '')
+#     data_prcs = int(data_processing)
+#     global tm_, n, ck_
+#     if tm_ != '':
+#         n = data_prcs - tm_
+#         if n >= 3:
+#             # print(data_prcs, tm_, n, ck_)
+#             # 3秒后判断进程如果不存在，就强制杀进程
+#             if ck_ is False:
+#                 dq_process()
+#             # 如果到达5秒，就重新初始化数据
+#             n = 0
+#             tm_ = data_prcs
+#         ck_ = False
+#     else:
+#         # 去掉时间冒号，并赋值给tm_
+#         tm_ = data_prcs
+# # 用程序包名获取到所有线程
+# def dq_process():
+#     all_pid = psutil.pids()
+#
+#     b = get_packName()
+#     print(b)
+#     # 遍历所有进程，判断匹配和包名一样的
+#     for pid in all_pid:
+#         p = psutil.Process(pid)
+#         if p.name() == b:
+#             print('进程：',p)
+#             p.kill()
+# def get_packName():
+#     '''
+#     获取当前程序包名
+#     :return: 当前程序运行包名
+#     '''
+#     # python 获取windows当前句柄，用句柄查找应用程序https://blog.51cto.com/knowledgeq/1951908
+#     import win32gui
+#     from colorama.win32 import windll
+#     # 获取user32.dll的API
+#     user32 = windll.user32
+#     # 获取当前窗口句柄
+#     hwnd = user32.GetForegroundWindow()
+#     # 获取句柄对应的应用程序
+#     app = win32gui.GetWindowText(hwnd)
+#     app=os.path.basename(app)
+#     return app
