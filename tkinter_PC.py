@@ -127,7 +127,7 @@ class GUI():
             self.text.delete('1.0', tk.END)
 
         # 清空按钮
-        self.btn = Button(root, text="清空", takefocus=0, command=deletes,
+        self.btn = Button(root, text="清空日志框", takefocus=0, command=deletes,
                           bg='#FFB6C1', fg='white', width=8, height=0, font=('Helvetica', '10'))
         self.btn.place(x=880, y=10)
 
