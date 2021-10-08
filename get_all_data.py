@@ -33,7 +33,7 @@ def GetProcessMEMORY(process_instance):
 
 def GetProcessMEMORY_RSS(process_instance):
     memory_rss = process_instance.memory_info().rss / 1024 / 1024 / 1024
-    return "{:.2f}".format(memory_rss)
+    return "{:.3f}".format(memory_rss)
 
 def GetProcessDISK(process_instance):
     disk=process_instance.io_counters()

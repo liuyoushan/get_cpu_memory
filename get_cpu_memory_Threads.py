@@ -204,7 +204,7 @@ def get_avg():
                  + ' ' * 5 + 'disk' + ' ' * 5 + 'network' + '\n'
     for i in range(len(avg_cpu[0])):
         space = ' ' * (13 - len(str(avg_cpu[1][i])))
-        info_lose += ('{p1}{p2}{p3}{p4:.2f}%({p5}){p8}{p6:.2f}% / {p7:.4f}GB({p9})\n'.format
+        info_lose += ('{p1}{p2}{p3}{p4:.2f}%({p5}){p8}{p6:.2f}% / {p7:.3f}GB({p9})\n'.format
                       (p1=' ' * 4, p2=avg_cpu[1][i], p3=space, p4=avg_cpu[0][i], p5=avg_cpu[2],
                        p6=avg_memory[0][i], p7=avg_memory_rss[0][i], p8=' ' * 10,
                        p9=avg_memory[2]))
@@ -216,7 +216,7 @@ def get_avg():
         memory += m
         rss += r
     info_lose += '程序总占用平均值：' + '\n'
-    info_lose += '             CPU:{:.2f}%     Memory:{:.2f}%     RSS:{:.4f}GB'.format(cpu, memory, rss)
+    info_lose += '             CPU:{:.2f}%     Memory:{:.2f}%     RSS:{:.3f}GB'.format(cpu, memory, rss)
     return info_lose
 
 '''

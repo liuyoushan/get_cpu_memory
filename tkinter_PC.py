@@ -91,17 +91,17 @@ class GUI():
         f.add_cascade(label='关于')
 
         w = tk.Label(root, text="程序包名：")
-        w.place(x=10, y=10)
+        w.place(x=20, y=10)
 
         # 输入框设置默认值
         addr = tkinter.StringVar()
         addr.set('firefox.exe')
         self.E1 = Entry(root, bd=2, bg='white', textvariable=addr)
-        self.E1.place(x=70, y=10)
+        self.E1.place(x=80, y=10)
 
         _tips = tk.Label(root, text="PS：鼠标焦点切换到底部可以自动滚动")
         # _tips.place(x=10, y=560)
-        _tips.place(relx=0.01, rely=0.96)
+        _tips.place(relx=0.03, rely=0.96)
 
         def _tips():
             tips = '功能简介：\n1、监控程序资源利用率\n2、运行结束自动计算平均值\n' \
@@ -109,12 +109,12 @@ class GUI():
             tkinter.messagebox.showinfo("提示", tips)
         self.tips = Button(root, text=' ? ', command=_tips,
                            bg='white', width=0, height=0, font=('Helvetica', '8'))
-        self.tips.place(x=216, y=10)
+        self.tips.place(x=226, y=10)
 
         # 开始运行按钮
         self.btn_start = Button(root, text="开始", takefocus=0, command=self.show,
                                 bg='blue', fg='white', width=8, height=0, font=('Helvetica', '10'))
-        self.btn_start.place(x=250, y=10)
+        self.btn_start.place(x=260, y=10)
 
         # 结束运行按钮
         self.btn = Button(root, text="结束", takefocus=0, command=self.end_threads,
@@ -134,11 +134,11 @@ class GUI():
         # 生成趋势图
         self.btn4 = Button(root, text="查看趋势图", takefocus=0, command=self.plt_if,
                            bg='blue', fg='white', width=8, height=0, font=('Helvetica', '10'))
-        self.btn4.place(x=340, y=10)
+        self.btn4.place(x=350, y=10)
 
         # 设置滚动条
         self.scrollBar = ttk.Scrollbar(root)
-        self.scrollBar.pack(side="right", fill="y")
+        self.scrollBar.pack(side=LEFT, fill="y")
 
         # Text（文本）组件用于显示和处理多行文本
         self.text = tk.Text(root, height=80, width=135, bd=1, relief="solid", bg='#5f9ea0',
