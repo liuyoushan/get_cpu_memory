@@ -2,7 +2,7 @@
 简介：获取PC端进程cpu、内存，并计算平均值
 ------------------------
 示例：
-![图片](https://user-images.githubusercontent.com/74752752/133182598-dd7c4320-846c-4d8e-b31e-06eb5d59b29a.png)
+![图片](https://user-images.githubusercontent.com/74752752/136493071-c76b102f-e5a8-40fc-adfa-76080312ca65.png)
 
 
 
