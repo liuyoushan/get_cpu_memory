@@ -4,3 +4,7 @@ build/tkinter_test/EXE-00.toc
 dist/log_getCM.txt
 *.txt
 dist/PC_监控程序资源.exe
+__pycache__/get_all_data.cpython-37.pyc
+*.pyc
+*.pyc
+__pycache__/get_cpu_memory_Threads.cpython-37.pyc
