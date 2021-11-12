@@ -82,6 +82,8 @@ class GUI():
         root.geometry("1000x600")
         root.resizable = False  # 是否可调整大小
 
+
+
         f = tk.Menu(root)
         root['menu'] = f
         f2 = tkinter.Menu(f)
@@ -107,6 +109,7 @@ class GUI():
             tips = '功能简介：\n1、监控程序资源利用率\n2、运行结束自动计算平均值\n' \
                    '3、查看曲线图\n4、logPATH：工具同级目录下'
             tkinter.messagebox.showinfo("提示", tips)
+
         self.tips = Button(root, text=' ? ', command=_tips,
                            bg='white', width=0, height=0, font=('Helvetica', '8'))
         self.tips.place(x=226, y=10)
@@ -136,16 +139,13 @@ class GUI():
                            bg='blue', fg='white', width=8, height=0, font=('Helvetica', '10'))
         self.btn4.place(x=350, y=10)
 
-        # 设置滚动条
+        # 设置日志框Y轴滚动条
         self.scrollBar = ttk.Scrollbar(root)
         self.scrollBar.pack(side=LEFT, fill="y")
-
         # Text（文本）组件用于显示和处理多行文本
         self.text = tk.Text(root, height=80, width=135, bd=1, relief="solid", bg='#5f9ea0',
                             yscrollcommand=self.scrollBar.set, maxundo=1)
-
         self.text.pack(side="left", fill="y", padx=10, pady=42)
-
         # 垂直滚动条绑定text
         self.scrollBar.config(command=self.text.yview)
 
@@ -234,20 +234,31 @@ class GUI():
 
     # 创建画布显示趋势图
     def plt_if(self):
+        try:
+            self.top.destroy()
+            print('删除旧子窗口')
+        except:
+            pass
         plts = _plt.creat_plt().plt()
         if plts is not False:
-            # 创建画布
-            self.canvs = FigureCanvasTkAgg(plts, self.root)
+            # 创建一个子窗口
+            self.top = Toplevel()
+            self.top.title('趋势图')
+            self.top.geometry("800x500")
+            # 子窗口创建画布
+            self.canvs = FigureCanvasTkAgg(plts, self.top)
             self.canvs.draw()
             print('成功创建画布')
             # 显示画布
-            self.canvs.get_tk_widget().place(relx=0.56, rely=0.07)
+            # self.canvs.get_tk_widget().place(relx=0.56, rely=0.07)
+            self.canvs.get_tk_widget().pack(side=LEFT)
             # 按钮设置为不可点击
             self.btn4['state'] = DISABLED
             # # 修改画布的图片
             self.update_canvas()
         else:
             tkinter.messagebox.showinfo("提示", '图片生成失败!!\n请先运行程序')
+
 
 
     '''这里就牛b了，解决了一个plt报错问题。
@@ -265,7 +276,7 @@ class GUI():
     def update_canvas(self):
         try:
             plts = _plt.creat_plt().plt()
-            self.canvs.figure = plts # 修改画布的图片
+            self.canvs.figure = plts  # 修改画布的图片
             self.canvs.draw()
             # 清图，就是上面备注里面说的东西
             _plt.plt.clf()
@@ -274,8 +285,12 @@ class GUI():
         except Exception as e:
             print('曲线图生成失败！！ERROR:{}'.format(e))
         # self.canvs.get_tk_widget().place(relx=0, rely=0.07)
-        if self.btn4['state'] == 'disabled' :
-            self.root.after(1000, self.update_canvas)
+        # 判断趋势图按钮的状态是否为“disabled”，and判断窗口是否存在
+        if self.btn4['state'] == 'disabled' and self.top.winfo_exists():
+            self.root.after(1500, self.update_canvas)
+        else:
+            self.btn4['state'] = NORMAL
+
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt  # 图片生成
-from matplotlib.pyplot import MultipleLocator   # 设置图片刻度
+from matplotlib.pyplot import MultipleLocator  # 设置图片刻度
 
 import get_cpu_memory_Threads
 
@@ -7,26 +7,22 @@ import get_cpu_memory_Threads
 class creat_plt:
     def __init__(self):
         self.fig = plt.figure()
-        self.fig = plt.figure(dpi=75, figsize=(9.5, 9.2))  # 设置图片大小
+        self.fig = plt.figure(dpi=75, figsize=(22, 10))  # 设置图片大小
+
 
     # 创建图
     def plt(self):
         '''
 
         :return: 返回figure生成的图片
-        '''
 
+        '''
 
         count_cpu = get_cpu_memory_Threads.count_cpu
         count_memory = get_cpu_memory_Threads.count_memory
         count_memoryRSS = get_cpu_memory_Threads.count_memoryRSS
         if count_cpu and count_memory and count_memoryRSS:
             try:
-                # # 清图释放内存，如果不释放会重复创建并且保存到程序内存里面，导致内存泄漏。
-                # plt.clf()
-                # plt.cla()
-                # plt.close("all")
-
                 # 第一张图片
                 plt.subplot(211, facecolor='#FFDAB9')  # 设置图片面板底色
                 plt.subplots_adjust(wspace=0, hspace=0.4)  # 调整2张图间距
