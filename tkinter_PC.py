@@ -82,8 +82,6 @@ class GUI():
         root.geometry("1000x600")
         root.resizable = False  # 是否可调整大小
 
-
-
         f = tk.Menu(root)
         root['menu'] = f
         f2 = tkinter.Menu(f)
@@ -115,12 +113,12 @@ class GUI():
         self.tips.place(x=226, y=10)
 
         # 开始运行按钮
-        self.btn_start = Button(root, text="开始", takefocus=0, command=self.show,
+        self.btn_start = Button(root, text="开始运行", takefocus=0, command=self.show,
                                 bg='blue', fg='white', width=8, height=0, font=('Helvetica', '10'))
         self.btn_start.place(x=260, y=10)
 
         # 结束运行按钮
-        self.btn = Button(root, text="结束", takefocus=0, command=self.end_threads,
+        self.btn = Button(root, text="结束运行", takefocus=0, command=self.end_threads,
                           bg='#FFB6C1', fg='white', width=8, height=0, font=('Helvetica', '10'))
         self.btn.place(x=790, y=10)
 
@@ -257,21 +255,21 @@ class GUI():
             # # 修改画布的图片
             self.update_canvas()
         else:
-            tkinter.messagebox.showinfo("提示", '图片生成失败!!\n请先运行程序')
-
-
+            tkinter.messagebox.showinfo("提示", '画布创建失败!!\n需先开始运行')
 
     '''这里就牛b了，解决了一个plt报错问题。
     error日志：（invalid command name "1671000502536show_msg"     while executing "1671000502536show_msg"     ("after" script)）
     问题原因：当直接关闭主页面窗口后，进程无法停止。
     问题分析：当我把plt图片清除后，发现未复现此问题。
-            分析可能因为plt里面还存在生成的图片，且因为控件载体已销毁无法显示，就会弹出报错，进程无法停止，
+            分析可能因为plt里面还存在生成的图片，但控件载体已销毁无法显示，则弹出报错，进程无法停止，
             导致程序窗口也无法关闭。
     解决方案：调用完plt图片并显示到画布后，直接去清除掉plt的图片，这样即可以解决报错问题，还能释放内存。
     解决的问题：
+    主要解决了2个问题
     1、清图释放内存，如果不释放会重复创建并且保存到程序内存里面，导致内存泄漏
     2、解决plt图片报错问题无法关闭进程问题
     '''
+
     # 修改画布的图片
     def update_canvas(self):
         try:
@@ -283,14 +281,16 @@ class GUI():
             _plt.plt.cla()
             _plt.plt.close("all")
         except Exception as e:
-            print('曲线图生成失败！！ERROR:{}'.format(e))
+            # print('曲线图生成失败！！ERROR:{}'.format(e))
+            tkinter.messagebox.showinfo("提示", '曲线图生成失败！！ERROR:{}'.format(e))
         # self.canvs.get_tk_widget().place(relx=0, rely=0.07)
-        # 判断趋势图按钮的状态是否为“disabled”，and判断窗口是否存在
+        # 判断趋势图按钮的状态是否为“disabled”，and判断窗口是否存在。
         if self.btn4['state'] == 'disabled' and self.top.winfo_exists():
+            # 存在，after循环运行此方法更新图片
             self.root.after(1500, self.update_canvas)
         else:
+            # 不存在，修改"查看趋势图"按钮状态为”可点击“状态
             self.btn4['state'] = NORMAL
-
 
 
 if __name__ == "__main__":
