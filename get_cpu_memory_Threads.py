@@ -6,7 +6,7 @@ import os
 import sys
 
 import get_all_data
-from get_cpu_memory.get_cpu_memory import tkinter_PC
+# from get_cpu_memory.get_cpu_memory import tkinter_PC
 
 '''
 脚本简介：根据包名找到指定包的所有线程，打印出所有线程每秒cpu使用率，并计算平均数。
