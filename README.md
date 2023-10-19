@@ -41,3 +41,7 @@ https://blog.csdn.net/Hubz131/article/details/94414013?utm_medium=distribute.pc_
     下载连接：https://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
 2、注意matplotlib 和numpy版本需要对应，不然报错（RuntimeError: implement_array_function method already has a docstring）
 我安装的是，numpy=1.17.0 , matplotlib==3.0.3 , python3.7.0
+
+打包参考：https://www.jianshu.com/p/ae85d2ed7a6e
+如果打包报错，可能需要手动导入 hiddenimports=['numpy.random.common', 'numpy.random.bounded_integers', 'numpy.random.entropy'],
+再次打包试试：pyinstaller **.spec
